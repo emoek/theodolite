@@ -9,6 +9,11 @@ plugins {
 repositories {
     mavenCentral()
     mavenLocal()
+    jcenter {
+        content {
+            includeGroup("org.jetbrains.kotlinx")
+        }
+    }
 }
 
 dependencies {

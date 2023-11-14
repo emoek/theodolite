@@ -35,7 +35,7 @@ object Theodolite {
                 LOGGER.warn("Theodolite does not automatically start in TEST mode.")
             } else {
                 val mode = Configuration.EXECUTION_MODE
-                LOGGER.info { "Start Theodolite in $mode mode." }
+                LOGGER.info { "Start Theodolite in $mode mode. !!! THIS IS THE EFFICIENCY BENCHMARKING VERSION !!!" }
 
                 val namespace = Configuration.NAMESPACE
                 //val client = KubernetesClientBuilder().withConfig(ConfigBuilder().withNamespace(namespace).build()))

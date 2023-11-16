@@ -70,6 +70,56 @@ class AnalysisExecutor(
         }
     }
 
+
+
+
+    /**
+     *  Analyses an experiment via prometheus data.
+     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  @param load of the experiment.
+     *  @param resource of the experiment.
+     *  @param executionIntervals list of start and end points of experiments
+     *  @return true if the experiment succeeded.
+     */
+    fun collect(load: Int, resource: Int, executionIntervals: List<Pair<Instant, Instant>>): Boolean {
+        var repetitionCounter = 1
+
+        try {
+            val ioHandler = IOHandler()
+            val resultsFolder = ioHandler.getResultFolderURL()
+            val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
+
+            val prometheusData = executionIntervals
+                    .map { interval ->
+                        fetcher.fetchMetric(
+                                start = interval.first,
+                                end = interval.second,
+                                query = SloConfigHandler.getQueryString(slo = slo)
+                        )
+                    }
+
+            prometheusData.forEach{ data ->
+                ioHandler.writeToCSVFile(
+                        fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
+                        data = data.getResultAsList(),
+                        columns = listOf("labels", "timestamp", "value")
+                )
+            }
+
+            val sloChecker = SloCheckerFactory().create(
+                    sloType = slo.sloType,
+                    properties = slo.properties,
+                    load = load,
+                    resources = resource
+            )
+
+            return sloChecker.evaluate(prometheusData)
+
+        } catch (e: Exception) {
+            throw EvaluationFailedException("Evaluation failed for resource '$resource' and load '$load ", e)
+        }
+    }
+
     private val NONLATIN: Pattern = Pattern.compile("[^\\w-]")
     private val WHITESPACE: Pattern = Pattern.compile("[\\s]")
 

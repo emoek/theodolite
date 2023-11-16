@@ -83,13 +83,20 @@ class ExperimentRunnerImpl(
             this.afterTeardownDelay,
             this.waitForResourcesEnabled
         )
-        val from: Instant
+
+
+//        val from: Instant
 
         try {
+            //use return of setup
             benchmarkDeployment.setup()
-            from = Instant.now()
 
-            this.waitAndLog()
+
+//            from = Instant.now()
+
+//            this.waitAndLog()
+
+
             if (mode == ExecutionModes.OPERATOR.value) {
                 eventCreator.createEvent(
                     executionName = executionName,
@@ -111,7 +118,10 @@ class ExperimentRunnerImpl(
             }
             throw ExecutionFailedException("Error during setup the experiment", e)
         }
-        val to = Instant.now()
+
+//        val to = Instant.now()
+
+
         try {
             benchmarkDeployment.teardown()
             if (mode == ExecutionModes.OPERATOR.value) {

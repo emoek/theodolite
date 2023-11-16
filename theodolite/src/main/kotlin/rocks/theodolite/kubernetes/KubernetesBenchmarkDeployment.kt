@@ -51,12 +51,35 @@ class KubernetesBenchmarkDeployment(
      *  - Deploy the needed [KubernetesResource]s (deployment order: SUT resources, loadgenerator resources;
      *    No guaranteed order of files inside configmaps).
      */
-    override fun setup() {
+//    override fun setup() {
+//        val rolloutManager = RolloutManager(rolloutMode, client)
+//        if (this.topics.isNotEmpty()) {
+//            val kafkaTopics = this.topics
+//                .filter { !it.removeOnly }
+//                .map { NewTopic(it.name, it.numPartitions, it.replicationFactor) }
+//            kafkaController.createTopics(kafkaTopics)
+//        }
+//
+//        sutBeforeActions.forEach { it.exec(client = client) }
+//        rolloutManager.rollout(appResources)
+//        logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
+//        Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
+//        loadGenBeforeActions.forEach { it.exec(client = client) }
+//        rolloutManager.rollout(loadGenResources)
+//    }
+
+    /**
+     * Setup a [KubernetesBenchmark] using the [TopicManager] and the [K8sManager]:
+     *  - Create the needed topics.
+     *  - Deploy the needed [KubernetesResource]s (deployment order: SUT resources, loadgenerator resources;
+     *    No guaranteed order of files inside configmaps).
+     */
+    override fun setup(slos: List<Slo>, ) {
         val rolloutManager = RolloutManager(rolloutMode, client)
         if (this.topics.isNotEmpty()) {
             val kafkaTopics = this.topics
-                .filter { !it.removeOnly }
-                .map { NewTopic(it.name, it.numPartitions, it.replicationFactor) }
+                    .filter { !it.removeOnly }
+                    .map { NewTopic(it.name, it.numPartitions, it.replicationFactor) }
             kafkaController.createTopics(kafkaTopics)
         }
 
@@ -67,6 +90,7 @@ class KubernetesBenchmarkDeployment(
         loadGenBeforeActions.forEach { it.exec(client = client) }
         rolloutManager.rollout(loadGenResources)
     }
+
 
     /**
      * Tears down a [KubernetesBenchmark]:

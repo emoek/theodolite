@@ -221,7 +221,7 @@ prometheus:
 operator:
   enabled: true
   
-  image: ghcr.io/cau-se/theodolite
+  image: emreoe/theonewtest
   imageTag: latest
   imagePullPolicy: Always
 

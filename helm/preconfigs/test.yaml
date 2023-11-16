@@ -1,0 +1,84 @@
+operator:
+  resultsVolume:
+    enabled: false
+strimzi:
+  enabled: false
+  zookeeper:
+    zooEntrance:
+      enabled: false
+      zookeeperClient:
+        enabled: false
+  schemaRegistry:
+    enabled: false
+
+operator:
+  sloChecker:
+    lagTrend:
+      enabled: false
+  theodoliteBenchmarks:
+    resourceConfigMaps:
+      uc1LoadGenerator: false
+      uc1Kstreams: false
+      uc1Flink: false
+      uc1BeamFlink: false
+      uc1BeamSamza: false
+      uc2LoadGenerator: false
+      uc2Kstreams: false
+      uc2Flink: false
+      uc2BeamFlink: false
+      uc2BeamSamza: false
+      uc3LoadGenerator: false
+      uc3Kstreams: false
+      uc3Flink: false
+      uc3BeamFlink: false
+      uc3BeamSamza: false
+      uc4LoadGenerator: false
+      uc4Kstreams: false
+      uc4Flink: false
+      uc4BeamFlink: false
+      uc4BeamSamza: false
+    benchmarks:
+      uc1Kstreams: false
+      uc1Flink: false
+      uc1BeamFlink: false
+      uc1BeamSamza: false
+      uc2Kstreams: false
+      uc2Flink: false
+      uc2BeamFlink: false
+      uc2BeamSamza: false
+      uc3Kstreams: false
+      uc3Flink: false
+      uc3BeamFlink: false
+      uc3BeamSamza: false
+      uc4Kstreams: false
+      uc4Flink: false
+      uc4BeamFlink: false
+      uc4BeamSamza: false
+###
+# Prometheus Monitoring Stack (Prometheus Operator)
+###
+kube-prometheus-stack:
+  global:
+    rbac:
+      create: true # enable for full-stack monitoring
+  
+  grafana:
+    defaultDashboardsEnabled: true
+
+  kubelet:
+    enabled: true
+  
+  kubeDns:
+    enabled: true
+   
+  kubeStateMetrics:
+    enabled: true
+  
+  nodeExporter:
+    enabled: true
+  
+  prometheus:
+    enabled: true # Use built-in Prometheus
+
+prometheus: 
+  enabled: false # Use built-in Prometheus

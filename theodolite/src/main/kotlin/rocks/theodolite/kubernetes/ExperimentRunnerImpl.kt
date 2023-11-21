@@ -37,7 +37,9 @@ class ExperimentRunnerImpl(
 
     override fun runExperiment(load: Int, resource: Int): Boolean {
         var result = false
-        val executionIntervals: MutableList<Pair<Instant, Instant>> = ArrayList()
+//        val executionIntervals: MutableList<Pair<Instant, Instant>> = ArrayList()
+        val executionIntervals: MutableList<MutableList<Triple<String,Instant, Instant>>> = ArrayList()
+
 
         for (i in 1.rangeTo(repetitions)) {
             if (this.run.get()) {
@@ -55,7 +57,36 @@ class ExperimentRunnerImpl(
          * Analyse the experiment, if [run] is true, otherwise the experiment was canceled by the user.
          */
         if (this.run.get()) {
-            val experimentResults = slos.map {
+
+//            val slos: List<Slo> =  slos
+
+            val (collectSlos, analysisSlos) = slos.partition { it.name.startsWith("collect") }
+//
+//            // auch hier interessant:
+//            // schauen ob "idle" "load" oder "base" im Namen um nur das nötigste zu scrapen
+            collectSlos.map {
+                AnalysisExecutor(slo = it, executionId = executionId)
+                        .collect(
+                                load = load,
+                                resource = resource,
+                                executionIntervals = executionIntervals
+                        )
+
+            }
+
+            // nutzen von analysisSlos
+            // evtl Name nutzen um zwischen "Load", "Load+Idle" und "Load+idle+base" zu unterscheiden
+            // default: Load
+            // anpassen der Intervalle
+            // falls zB Load+Idle => Anpassen der Intervalle
+//            val interval = "load"
+//
+//            val sloInterval = executionIntervals.filter { intervalList ->
+//                intervalList.any { triple -> triple.first == interval }
+//            }
+
+
+            val experimentResults = analysisSlos.map {
                 AnalysisExecutor(slo = it, executionId = executionId)
                     .analyze(
                         load = load,
@@ -72,7 +103,11 @@ class ExperimentRunnerImpl(
         return result
     }
 
-    private fun runSingleExperiment(load: Int, resource: Int): Pair<Instant, Instant> {
+
+
+
+
+    private fun runSingleExperiment(load: Int, resource: Int): MutableList<Triple<String,Instant,Instant>> {
         val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
             load,
             this.loadPatcherDefinitions,
@@ -85,23 +120,30 @@ class ExperimentRunnerImpl(
         )
 
 
-//        val from: Instant
+        val from_base: Instant
+        val from_idle: Instant
+        val from_load: Instant
+        val timestamps: MutableList<Triple<String,Instant,Instant>> = mutableListOf()
 
         try {
-            //use return of setup
-            benchmarkDeployment.setup()
+
+            benchmarkDeployment.setup("base")
 
 
-//            from = Instant.now()
 
-//            this.waitAndLog()
+
+            from_base = Instant.now()
+
+            this.waitAndLog()
+
+
 
 
             if (mode == ExecutionModes.OPERATOR.value) {
                 eventCreator.createEvent(
                     executionName = executionName,
                     type = "NORMAL",
-                    reason = "Start experiment",
+                    reason = "Start experiment Base Stage",
                     message = "load: $load, resources: $resource"
                 )
             }
@@ -112,14 +154,127 @@ class ExperimentRunnerImpl(
                 eventCreator.createEvent(
                     executionName = executionName,
                     type = "WARNING",
-                    reason = "Start experiment failed",
+                    reason = "Start experiment Base Stage failed",
                     message = "load: $load, resources: $resource"
                 )
             }
             throw ExecutionFailedException("Error during setup the experiment", e)
         }
 
-//        val to = Instant.now()
+        val to_base = Instant.now()
+        timestamps.add(Triple("base",from_base,to_base))
+
+        // COLLECT() WITH ANALYSISEXECUTOR
+//        slos.map {
+//            AnalysisExecutor(slo = it, executionId = executionId)
+//                    .collect(
+//                            load = load,
+//                            resource = resource,
+//                            executionIntervals = executionIntervals,
+//                            stage = "base"
+//
+//                    )
+//        }
+
+
+        try {
+
+            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the SUT." }
+            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
+            benchmarkDeployment.setup("idle")
+
+
+
+
+            from_idle = Instant.now()
+
+            this.waitAndLog()
+
+
+
+
+            if (mode == ExecutionModes.OPERATOR.value) {
+                eventCreator.createEvent(
+                        executionName = executionName,
+                        type = "NORMAL",
+                        reason = "Start experiment Idle Stage",
+                        message = "load: $load, resources: $resource"
+                )
+            }
+        } catch (e: Exception) {
+            this.run.set(false)
+
+            if (mode == ExecutionModes.OPERATOR.value) {
+                eventCreator.createEvent(
+                        executionName = executionName,
+                        type = "WARNING",
+                        reason = "Start experiment Idle Stage failed",
+                        message = "load: $load, resources: $resource"
+                )
+            }
+            throw ExecutionFailedException("Error during setup the experiment", e)
+        }
+
+        val to_idle = Instant.now()
+        timestamps.add(Triple("idle",from_idle,to_idle))
+
+
+
+        // COLLECT() WITH ANALYSISEXECUTOR
+
+
+
+        try {
+
+            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
+            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
+            benchmarkDeployment.setup("load")
+
+
+
+
+            from_load = Instant.now()
+
+            this.waitAndLog()
+
+
+
+
+            if (mode == ExecutionModes.OPERATOR.value) {
+                eventCreator.createEvent(
+                        executionName = executionName,
+                        type = "NORMAL",
+                        reason = "Start experiment Load Stage",
+                        message = "load: $load, resources: $resource"
+                )
+            }
+        } catch (e: Exception) {
+            this.run.set(false)
+
+            if (mode == ExecutionModes.OPERATOR.value) {
+                eventCreator.createEvent(
+                        executionName = executionName,
+                        type = "WARNING",
+                        reason = "Start experiment Load Stage failed",
+                        message = "load: $load, resources: $resource"
+                )
+            }
+            throw ExecutionFailedException("Error during setup the experiment", e)
+        }
+
+        val to_load = Instant.now()
+        timestamps.add(Triple("load",from_load,to_load))
+
+
+
+        // ANALYZE() WITH ANALYSISEXECUTOR
+
+
+
+
+
+
+
 
 
         try {
@@ -143,7 +298,7 @@ class ExperimentRunnerImpl(
             }
             throw ExecutionFailedException("Error during teardown the experiment", e)
         }
-        return Pair(from, to)
+        return timestamps
     }
 
     /**

@@ -73,12 +73,13 @@ class AnalysisExecutor(
 
                         // maybe replace slo.name with name
                         ioHandler.writeToCSVFile(
-                                fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter++}",
+                                fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
                                 data = prometheusData.getResultAsList(),
                                 columns = listOf("labels", "timestamp", "value")
                         )
                     }
                 }
+                repetitionCounter++
             }
 
             val sloChecker = SloCheckerFactory().create(
@@ -147,12 +148,13 @@ class AnalysisExecutor(
 
                         // maybe replace slo.name with name
                         ioHandler.writeToCSVFile(
-                                fileURL = "${fileURL}_${name}_${stage}_${repetitionCounter++}",
+                                fileURL = "${fileURL}_${name}_${stage}_${repetitionCounter}",
                                 data = prometheusData.getResultAsList(),
                                 columns = listOf("labels", "timestamp", "value")
                         )
                     }
                 }
+                repetitionCounter++
             }
 
 

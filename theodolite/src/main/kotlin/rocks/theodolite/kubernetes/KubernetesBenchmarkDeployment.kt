@@ -49,28 +49,7 @@ class KubernetesBenchmarkDeployment(
 
 
 
-    /**
-     * Setup a [KubernetesBenchmark] using the [TopicManager] and the [K8sManager]:
-     *  - Create the needed topics.
-     *  - Deploy the needed [KubernetesResource]s (deployment order: SUT resources, loadgenerator resources;
-     *    No guaranteed order of files inside configmaps).
-     */
-//    override fun setup() {
-//        val rolloutManager = RolloutManager(rolloutMode, client)
-//        if (this.topics.isNotEmpty()) {
-//            val kafkaTopics = this.topics
-//                .filter { !it.removeOnly }
-//                .map { NewTopic(it.name, it.numPartitions, it.replicationFactor) }
-//            kafkaController.createTopics(kafkaTopics)
-//        }
-//
-//        sutBeforeActions.forEach { it.exec(client = client) }
-//        rolloutManager.rollout(appResources)
-//        logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
-//        Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
-//        loadGenBeforeActions.forEach { it.exec(client = client) }
-//        rolloutManager.rollout(loadGenResources)
-//    }
+
 
     /**
      * Setup a [KubernetesBenchmark] using the [TopicManager] and the [K8sManager]:
@@ -93,29 +72,18 @@ class KubernetesBenchmarkDeployment(
             sutBeforeActions.forEach { it.exec(client = client) }
 
 
-        }
-
-
-
-        if (stage == "idle") {
-//            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
+        } else if (stage == "idle") {
+            //logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             rolloutManager.rollout(appResources)
-
-
-        }
-
-        if (stage == "load") {
+        } else if (stage == "load") {
             loadGenBeforeActions.forEach { it.exec(client = client) }
 //            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             rolloutManager.rollout(loadGenResources)
-
-
-
+        } else {
+            logger.info { "The specified stage ${stage} does not exist." }
         }
-
-        logger.info { "The specified stage ${stage} does not exist." }
 
 
 

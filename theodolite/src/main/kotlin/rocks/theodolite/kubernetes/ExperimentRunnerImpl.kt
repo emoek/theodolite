@@ -61,9 +61,9 @@ class ExperimentRunnerImpl(
 //            val slos: List<Slo> =  slos
 
             val (collectSlos, analysisSlos) = slos.partition { it.name.startsWith("collect") }
-//
-//            // auch hier interessant:
-//            // schauen ob "idle" "load" oder "base" im Namen um nur das nötigste zu scrapen
+
+
+
             collectSlos.map {
                 AnalysisExecutor(slo = it, executionId = executionId)
                         .collect(
@@ -74,16 +74,7 @@ class ExperimentRunnerImpl(
 
             }
 
-            // nutzen von analysisSlos
-            // evtl Name nutzen um zwischen "Load", "Load+Idle" und "Load+idle+base" zu unterscheiden
-            // default: Load
-            // anpassen der Intervalle
-            // falls zB Load+Idle => Anpassen der Intervalle
-//            val interval = "load"
-//
-//            val sloInterval = executionIntervals.filter { intervalList ->
-//                intervalList.any { triple -> triple.first == interval }
-//            }
+
 
 
             val experimentResults = analysisSlos.map {
@@ -164,17 +155,7 @@ class ExperimentRunnerImpl(
         val to_base = Instant.now()
         timestamps.add(Triple("base",from_base,to_base))
 
-        // COLLECT() WITH ANALYSISEXECUTOR
-//        slos.map {
-//            AnalysisExecutor(slo = it, executionId = executionId)
-//                    .collect(
-//                            load = load,
-//                            resource = resource,
-//                            executionIntervals = executionIntervals,
-//                            stage = "base"
-//
-//                    )
-//        }
+
 
 
         try {
@@ -220,7 +201,6 @@ class ExperimentRunnerImpl(
 
 
 
-        // COLLECT() WITH ANALYSISEXECUTOR
 
 
 
@@ -267,7 +247,6 @@ class ExperimentRunnerImpl(
 
 
 
-        // ANALYZE() WITH ANALYSISEXECUTOR
 
 
 
@@ -305,7 +284,7 @@ class ExperimentRunnerImpl(
      * Wait while the benchmark is running and log the number of minutes executed every 1 minute.
      */
     fun waitAndLog() {
-        logger.info { "Execution of a new experiment started." }
+        logger.info { "Execution of a new stage started." }
 
         var secondsRunning = 0L
 

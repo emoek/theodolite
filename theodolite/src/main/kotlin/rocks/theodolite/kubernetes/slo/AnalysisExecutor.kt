@@ -47,14 +47,14 @@ class AnalysisExecutor(
             val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
 
 
-            val parts = slo.name.split("-")
-
-
-            val nameIndex = 0
-            val name = parts.getOrNull(nameIndex) ?: throw IllegalArgumentException("Invalid or no username")
-
-            val stagePart = parts.getOrNull(nameIndex + 1)
-            val stages = stagePart?.split("+") ?: emptyList()
+//            val parts = slo.name.split("-")
+//
+//
+//            val nameIndex = 0
+//            val name = parts.getOrNull(nameIndex) ?: throw IllegalArgumentException("Invalid or no username")
+//
+//            val stagePart = parts.getOrNull(nameIndex + 1)
+//            val stages = stagePart?.split("+") ?: emptyList()
 
 
             val prometheusDataList: MutableList<PrometheusResponse> = mutableListOf()

@@ -2,6 +2,7 @@ package rocks.theodolite.kubernetes.slo
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import io.quarkus.runtime.annotations.RegisterForReflection
+import rocks.theodolite.core.IOHandler
 import java.util.*
 
 /**
@@ -19,12 +20,16 @@ data class PrometheusResponse(
      */
     var data: PromData? = null
 ) {
+
+
     /**
      * Return the data of the PrometheusResponse as [List] of [List]s of [String]s
      * The format of the returned list is: `[[ group, timestamp, value ], [ group, timestamp, value ], ... ]`
      */
     @JsonIgnore
     fun getResultAsList(): List<List<String>> {
+
+
         val group = data?.result?.get(0)?.metric?.toString()!!
         val values = data?.result?.get(0)?.values
         val result = mutableListOf<List<String>>()
@@ -39,7 +44,42 @@ data class PrometheusResponse(
         }
         return Collections.unmodifiableList(result)
     }
+
+    /**
+     * Return the data of the PrometheusResponse as [List] of [List]s of [String]s
+     * The format of the returned list is: `[[ group, timestamp, value ], [ group, timestamp, value ], ... ]`
+     */
+    @JsonIgnore
+    fun getAllResultAsList(): List<List<String>> {
+
+
+        //        val ioHandler = IOHandler()
+        //        val resultsFolder = ioHandler.getResultFolderURL()
+
+        //        ioHandler.writeToCSVFile(
+        //                fileURL = "${resultsFolder}_alldata",
+        //                data = ,
+        //                columns = listOf("labels", "timestamp", "value")
+        //        )
+
+
+        val result = mutableListOf<List<String>>()
+        data?.result?.forEach { promResult ->
+            val group = promResult.metric?.toString() ?: ""
+            promResult.values?.forEach { value ->
+                val valueList = value as List<*>
+                val timestamp = (valueList[0] as Double).toLong().toString()
+                val resultValue = valueList[1].toString()
+                result.add(listOf(group, timestamp, resultValue))
+            }
+        }
+        return Collections.unmodifiableList(result)
+    }
+
 }
+
+
+
 
 /**
  * Description of Prometheus data.

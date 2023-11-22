@@ -148,7 +148,7 @@ class AnalysisExecutor(
 
                         // maybe replace slo.name with name
                         ioHandler.writeToCSVFile(
-                                fileURL = "${fileURL}_${name}_${stage}_${repetitionCounter}",
+                                fileURL = "${fileURL}_collect_${name}_${stage}_${repetitionCounter}",
                                 data = prometheusData.getResultAsList(),
                                 columns = listOf("labels", "timestamp", "value")
                         )

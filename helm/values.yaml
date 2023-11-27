@@ -221,7 +221,7 @@ prometheus:
 operator:
   enabled: true
   
-  image: emreoe/theonewtest
+  image: emreoe/theomod
   imageTag: latest
   imagePullPolicy: Always
 

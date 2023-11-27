@@ -60,9 +60,29 @@ class ExperimentRunnerImpl(
 
 //            val slos: List<Slo> =  slos
 
-            val (collectSlos, analysisSlos) = slos.partition { it.name.startsWith("collect") }
+            val (collectSlos, analysisSlos) = slos.partition { it.properties["collect"]?.lowercase() == "true" }
 
 
+
+
+//            val collect = slo.properties["collect"] ?: DEFAULT_COLLECT
+
+
+//            slos.map { slo ->
+//                if (slo.properties["collect"]?.lowercase() == "true")
+//                    AnalysisExecutor(slo = it, executionId = executionId)
+//                        .collect(
+//                                load = load,
+//                                resource = resource,
+//                                executionIntervals = executionIntervals
+//                        ) else
+//                            AnalysisExecutor(slo = it, executionId = executionId)
+//                        .analyze(
+//                                load = load,
+//                                resource = resource,
+//                                executionIntervals = executionIntervals
+//                        )
+//            }
 
             collectSlos.map {
                 AnalysisExecutor(slo = it, executionId = executionId)

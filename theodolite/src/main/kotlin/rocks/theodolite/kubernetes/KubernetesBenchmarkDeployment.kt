@@ -81,9 +81,7 @@ class KubernetesBenchmarkDeployment(
 //            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             rolloutManager.rollout(loadGenResources)
-        } else {
-            logger.info { "The specified stage ${stage} does not exist." }
-        }
+        } 
 
 
 

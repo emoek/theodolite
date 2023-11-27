@@ -10,6 +10,9 @@ import java.util.regex.Pattern
 
 private val DEFAULT_STEP_SIZE = Duration.ofSeconds(5)
 
+//relevant when SLOChecker adapted
+//private val DEFAULT_STAGE = "load"
+
 /**
  * Contains the analysis. Fetches a metric from Prometheus, documents it, and evaluates it.
  * @param slo Slo that is used for the analysis.
@@ -51,6 +54,8 @@ class AnalysisExecutor(
 
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
 
+            //relevant when SLOChecker adapted
+//            val stages = slo.properties["stages"]?.lowercase()?.split("+")
 
 //            val parts = slo.name.split("-")
 //
@@ -60,6 +65,8 @@ class AnalysisExecutor(
 //
 //            val stagePart = parts.getOrNull(nameIndex + 1)
 //            val stages = stagePart?.split("+") ?: emptyList()
+
+
 
 
             val prometheusDataList: MutableList<PrometheusResponse> = mutableListOf()
@@ -72,7 +79,7 @@ class AnalysisExecutor(
                         val prometheusData = fetcher.fetchMetric(
                                 start = start,
                                 end = end,
-				stepSize = stepSize,
+				                stepSize = stepSize,
                                 query = SloConfigHandler.getQueryString(slo = slo)
                         )
                         prometheusDataList.add(prometheusData)
@@ -126,25 +133,29 @@ class AnalysisExecutor(
             val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
 
 
-            val parts = slo.name.split("-")
+//            val parts = slo.name.split("-")
 
 //            val isCollect = parts.firstOrNull() == "collect"
 //            val nameIndex = if (isCollect) 1 else 0
-            val nameIndex = 1
-            val name = parts.getOrNull(nameIndex) ?: throw IllegalArgumentException("Invalid or no username")
+//            val nameIndex = 1
+//            val name = parts.getOrNull(nameIndex) ?: throw IllegalArgumentException("Invalid or no username")
+//
+//            val stagePart = parts.getOrNull(nameIndex + 1)
+//            val stages = stagePart?.split("+") ?: emptyList()
 
-            val stagePart = parts.getOrNull(nameIndex + 1)
-            val stages = stagePart?.split("+") ?: emptyList()
 
 
-	    val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
+	        val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
+
+            val stages = slo.properties["stages"]?.lowercase()?.split("+")
+
 
             executionIntervals.forEach { intervalList ->
                 intervalList.forEach { (stage, start, end) ->
 
 
 
-                    if (stage in listOf("base", "idle", "load") && stage in stages) {
+                    if (stage in listOf("base", "idle", "load") && stages?.contains(stage) == true) {
 
                         // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
                         val prometheusData = fetcher.fetchMetric(
@@ -156,7 +167,7 @@ class AnalysisExecutor(
 
                         // maybe replace slo.name with name
                         ioHandler.writeToCSVFile(
-                                fileURL = "${fileURL}_collect_${name}_${stage}_${repetitionCounter}",
+                                fileURL = "${fileURL}_collect_${slo.name}_${stage}_${repetitionCounter}",
                                 data = prometheusData.getAllResultAsList(),
                                 columns = listOf("labels", "timestamp", "value")
                         )

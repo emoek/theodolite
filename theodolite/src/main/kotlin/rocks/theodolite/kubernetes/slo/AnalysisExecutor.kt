@@ -23,8 +23,8 @@ class AnalysisExecutor(
 ) {
 
     private val fetcher = MetricFetcher(
-        prometheusURL = slo.prometheusUrl,
-        offset = Duration.ofHours(slo.offset.toLong())
+            prometheusURL = slo.prometheusUrl,
+            offset = Duration.ofHours(slo.offset.toLong())
     )
 
 
@@ -79,7 +79,7 @@ class AnalysisExecutor(
                         val prometheusData = fetcher.fetchMetric(
                                 start = start,
                                 end = end,
-				                stepSize = stepSize,
+                                stepSize = stepSize,
                                 query = SloConfigHandler.getQueryString(slo = slo)
                         )
                         prometheusDataList.add(prometheusData)
@@ -145,7 +145,7 @@ class AnalysisExecutor(
 
 
 
-	        val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
+            val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
 
             val stages = slo.properties["stages"]?.lowercase()?.split("+")
 
@@ -161,7 +161,7 @@ class AnalysisExecutor(
                         val prometheusData = fetcher.fetchMetric(
                                 start = start,
                                 end = end,
-				stepSize = stepSize,
+                                stepSize = stepSize,
                                 query = SloConfigHandler.getQueryString(slo = slo)
                         )
 

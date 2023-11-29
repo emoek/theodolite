@@ -29,18 +29,18 @@ private val logger = KotlinLogging.logger {}
  */
 @RegisterForReflection
 class KubernetesBenchmarkDeployment(
-    private val sutBeforeActions: List<Action>,
-    private val sutAfterActions: List<Action>,
-    private val loadGenBeforeActions: List<Action>,
-    private val loadGenAfterActions: List<Action>,
-    private val rolloutMode: Boolean,
-    val appResources: List<HasMetadata>,
-    val loadGenResources: List<HasMetadata>,
-    private val loadGenerationDelay: Long,
-    private val afterTeardownDelay: Long,
-    private val kafkaConfig: Map<String, Any>,
-    private val topics: List<KafkaConfig.TopicWrapper>,
-    private val client: NamespacedKubernetesClient
+        private val sutBeforeActions: List<Action>,
+        private val sutAfterActions: List<Action>,
+        private val loadGenBeforeActions: List<Action>,
+        private val loadGenAfterActions: List<Action>,
+        private val rolloutMode: Boolean,
+        val appResources: List<HasMetadata>,
+        val loadGenResources: List<HasMetadata>,
+        private val loadGenerationDelay: Long,
+        private val afterTeardownDelay: Long,
+        private val kafkaConfig: Map<String, Any>,
+        private val topics: List<KafkaConfig.TopicWrapper>,
+        private val client: NamespacedKubernetesClient
 ) : BenchmarkDeployment {
     private val kafkaController = TopicManager(this.kafkaConfig)
     private val kubernetesManager = K8sManager(client)
@@ -81,7 +81,7 @@ class KubernetesBenchmarkDeployment(
 //            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             rolloutManager.rollout(loadGenResources)
-        } 
+        }
 
 
 
@@ -108,20 +108,19 @@ class KubernetesBenchmarkDeployment(
         }
 
         listOf(loadGenResources, appResources)
-            .forEach {
-                if (it is Deployment) {
-                    podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)
-                } else if (it is StatefulSet) {
-                    podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)
+                .forEach {
+                    if (it is Deployment) {
+                        podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)
+                    } else if (it is StatefulSet) {
+                        podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)
+                    }
                 }
-            }
 
         podCleaner.removePods(
-            labelName = LAG_EXPORTER_POD_LABEL_NAME,
-            labelValue = LAG_EXPORTER_POD_LABEL_VALUE
+                labelName = LAG_EXPORTER_POD_LABEL_NAME,
+                labelValue = LAG_EXPORTER_POD_LABEL_VALUE
         )
         logger.info { "Teardown complete. Wait $afterTeardownDelay seconds to let everything cool down." }
         Thread.sleep(Duration.ofSeconds(afterTeardownDelay).toMillis())
     }
 }
-

@@ -42,71 +42,71 @@ class SloCheckerFactory {
      * @throws IllegalArgumentException If [sloType] not supported.
      */
     fun create(
-        sloType: String,
-        properties: Map<String, String>,
-        load: Int,
-        resources: Int
+            sloType: String,
+            properties: Map<String, String>,
+            load: Int,
+            resources: Int
     ): SloChecker =
-        when (SloTypes.from(sloType)) {
-            SloTypes.GENERIC -> ExternalSloChecker(
-                externalSlopeURL = properties["externalSloUrl"]
-                    ?: throw IllegalArgumentException("externalSloUrl expected"),
-                // TODO validate property contents
-                metadata = mapOf(
-                    "warmup" to (properties["warmup"]?.toInt() ?: throw IllegalArgumentException("warmup expected")),
-                    "queryAggregation" to (properties["queryAggregation"]
-                        ?: throw IllegalArgumentException("queryAggregation expected")),
-                    "repetitionAggregation" to (properties["repetitionAggregation"]
-                        ?: throw IllegalArgumentException("repetitionAggregation expected")),
-                    "operator" to (properties["operator"] ?: throw IllegalArgumentException("operator expected")),
-                    "threshold" to (properties["threshold"]?.toDoubleOrNull()
-                        ?: properties["thresholdRelToLoad"]?.toDoubleOrNull()?.times(load)
-                        ?: properties["thresholdRelToResources"]?.toDoubleOrNull()?.times(resources)
-                        ?: properties["thresholdFromExpression"]?.let { this.eval(it, load, resources) }
-                        ?: throw IllegalArgumentException("'threshold', 'thresholdRelToLoad' or 'thresholdRelToResources' or 'thresholdFromExpression' expected"))
+            when (SloTypes.from(sloType)) {
+                SloTypes.GENERIC -> ExternalSloChecker(
+                        externalSlopeURL = properties["externalSloUrl"]
+                                ?: throw IllegalArgumentException("externalSloUrl expected"),
+                        // TODO validate property contents
+                        metadata = mapOf(
+                                "warmup" to (properties["warmup"]?.toInt() ?: throw IllegalArgumentException("warmup expected")),
+                                "queryAggregation" to (properties["queryAggregation"]
+                                        ?: throw IllegalArgumentException("queryAggregation expected")),
+                                "repetitionAggregation" to (properties["repetitionAggregation"]
+                                        ?: throw IllegalArgumentException("repetitionAggregation expected")),
+                                "operator" to (properties["operator"] ?: throw IllegalArgumentException("operator expected")),
+                                "threshold" to (properties["threshold"]?.toDoubleOrNull()
+                                        ?: properties["thresholdRelToLoad"]?.toDoubleOrNull()?.times(load)
+                                        ?: properties["thresholdRelToResources"]?.toDoubleOrNull()?.times(resources)
+                                        ?: properties["thresholdFromExpression"]?.let { this.eval(it, load, resources) }
+                                        ?: throw IllegalArgumentException("'threshold', 'thresholdRelToLoad' or 'thresholdRelToResources' or 'thresholdFromExpression' expected"))
+                        )
                 )
-            )
-            SloTypes.LAG_TREND -> ExternalSloChecker(
-                externalSlopeURL = properties["externalSloUrl"]
-                    ?: throw IllegalArgumentException("externalSloUrl expected"),
-                metadata = mapOf(
-                    "warmup" to (properties["warmup"]?.toInt() ?: throw IllegalArgumentException("warmup expected")),
-                    "threshold" to (properties["threshold"]?.toDoubleOrNull()
-                        ?: properties["thresholdRelToLoad"]?.toDoubleOrNull()?.times(load)
-                        ?: properties["thresholdRelToResources"]?.toDoubleOrNull()?.times(resources)
-                        ?: properties["thresholdFromExpression"]?.let { this.eval(it, load, resources) }
-                        ?: throw IllegalArgumentException("Valid 'threshold', 'thresholdRelToLoad' or 'thresholdRelToResources' or 'thresholdFromExpression' expected"))
+                SloTypes.LAG_TREND -> ExternalSloChecker(
+                        externalSlopeURL = properties["externalSloUrl"]
+                                ?: throw IllegalArgumentException("externalSloUrl expected"),
+                        metadata = mapOf(
+                                "warmup" to (properties["warmup"]?.toInt() ?: throw IllegalArgumentException("warmup expected")),
+                                "threshold" to (properties["threshold"]?.toDoubleOrNull()
+                                        ?: properties["thresholdRelToLoad"]?.toDoubleOrNull()?.times(load)
+                                        ?: properties["thresholdRelToResources"]?.toDoubleOrNull()?.times(resources)
+                                        ?: properties["thresholdFromExpression"]?.let { this.eval(it, load, resources) }
+                                        ?: throw IllegalArgumentException("Valid 'threshold', 'thresholdRelToLoad' or 'thresholdRelToResources' or 'thresholdFromExpression' expected"))
+                        )
                 )
-            )
-            SloTypes.LAG_TREND_RATIO -> {
-                val thresholdRatio =
-                    properties["ratio"]?.toDouble()
-                        ?: throw IllegalArgumentException("ratio for threshold expected")
-                if (thresholdRatio < 0.0) {
-                    throw IllegalArgumentException("Threshold ratio needs to be an Double greater or equal 0.0")
+                SloTypes.LAG_TREND_RATIO -> {
+                    val thresholdRatio =
+                            properties["ratio"]?.toDouble()
+                                    ?: throw IllegalArgumentException("ratio for threshold expected")
+                    if (thresholdRatio < 0.0) {
+                        throw IllegalArgumentException("Threshold ratio needs to be an Double greater or equal 0.0")
+                    }
+
+                    val threshold = (load * thresholdRatio)
+
+                    ExternalSloChecker(
+                            externalSlopeURL = properties["externalSloUrl"]
+                                    ?: throw IllegalArgumentException("externalSloUrl expected"),
+                            metadata = mapOf(
+                                    "warmup" to (properties["warmup"]?.toInt()
+                                            ?: throw IllegalArgumentException("warmup expected")),
+                                    "threshold" to threshold
+                            )
+                    )
                 }
 
-                val threshold = (load * thresholdRatio)
-
-                ExternalSloChecker(
-                    externalSlopeURL = properties["externalSloUrl"]
-                        ?: throw IllegalArgumentException("externalSloUrl expected"),
-                    metadata = mapOf(
-                        "warmup" to (properties["warmup"]?.toInt()
-                            ?: throw IllegalArgumentException("warmup expected")),
-                        "threshold" to threshold
-                    )
-                )
             }
-
-    }
 
     private fun eval(expression: String, load: Int, resources: Int): Double {
         return ExpressionBuilder(expression)
-            .variables("L", "R")
-            .build()
-            .setVariable("L", load.toDouble())
-            .setVariable("R", resources.toDouble())
-            .evaluate()
+                .variables("L", "R")
+                .build()
+                .setVariable("L", load.toDouble())
+                .setVariable("R", resources.toDouble())
+                .evaluate()
     }
 }

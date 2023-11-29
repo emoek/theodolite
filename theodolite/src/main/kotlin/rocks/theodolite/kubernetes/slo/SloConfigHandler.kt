@@ -14,9 +14,9 @@ class SloConfigHandler {
             return when (slo.sloType.lowercase()) {
                 SloTypes.GENERIC.value -> slo.properties["promQLQuery"] ?: throw IllegalArgumentException("promQLQuery expected")
                 SloTypes.LAG_TREND.value, SloTypes.LAG_TREND_RATIO.value -> slo.properties["promQLQuery"] ?:
-                    (slo.properties["consumerGroup"]?.let { "{consumergroup='$it'}" } ?: "").let {
-                        "sum by(consumergroup) ($DEFAULT_CONSUMER_LAG_METRIC_BASE$it >= 0)"
-                    }
+                (slo.properties["consumerGroup"]?.let { "{consumergroup='$it'}" } ?: "").let {
+                    "sum by(consumergroup) ($DEFAULT_CONSUMER_LAG_METRIC_BASE$it >= 0)"
+                }
                 SloTypes.LAG_TREND.value, SloTypes.LAG_TREND_RATIO.value -> slo.properties["promQLQuery"] ?: DEFAULT_CONSUMER_LAG_QUERY // TODO reachable?
                 else -> throw InvalidPatcherConfigurationException("Could not find Prometheus query string for slo type ${slo.sloType}")
             }

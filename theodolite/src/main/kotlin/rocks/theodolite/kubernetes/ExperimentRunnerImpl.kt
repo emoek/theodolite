@@ -58,31 +58,12 @@ class ExperimentRunnerImpl(
          */
         if (this.run.get()) {
 
-//            val slos: List<Slo> =  slos
-
-            val (collectSlos, analysisSlos) = slos.partition { it.properties["collect"]?.lowercase() == "true" }
 
 
+            val (collectSlos, analysisSlos) = slos.partition { it.sloType.lowercase() == "collect" }
+            val (efficiencySlos, scalabilitySlos) = analysisSlos.partition { it.sloType.lowercase() == "efficiency" }
 
 
-//            val collect = slo.properties["collect"] ?: DEFAULT_COLLECT
-
-
-//            slos.map { slo ->
-//                if (slo.properties["collect"]?.lowercase() == "true")
-//                    AnalysisExecutor(slo = it, executionId = executionId)
-//                        .collect(
-//                                load = load,
-//                                resource = resource,
-//                                executionIntervals = executionIntervals
-//                        ) else
-//                            AnalysisExecutor(slo = it, executionId = executionId)
-//                        .analyze(
-//                                load = load,
-//                                resource = resource,
-//                                executionIntervals = executionIntervals
-//                        )
-//            }
 
             collectSlos.map {
                 AnalysisExecutor(slo = it, executionId = executionId)
@@ -95,16 +76,34 @@ class ExperimentRunnerImpl(
             }
 
 
+            val experimentResults: MutableList<Boolean> = mutableListOf()
 
-
-            val experimentResults = analysisSlos.map {
-                AnalysisExecutor(slo = it, executionId = executionId)
-                    .analyze(
-                        load = load,
-                        resource = resource,
-                        executionIntervals = executionIntervals
-                    )
+            if (scalabilitySlos.isNotEmpty()) {
+                val scalabilityResults = scalabilitySlos.map {
+                    AnalysisExecutor(slo = it, executionId = executionId)
+                            .analyze(
+                                    load = load,
+                                    resource = resource,
+                                    executionIntervals = executionIntervals
+                            )
+                }
+                experimentResults.addAll(scalabilityResults)
             }
+
+
+            if (efficiencySlos.isNotEmpty()) {
+                val efficiencyResults = efficiencySlos.map {
+                    AnalysisExecutor(slo = it, executionId = executionId)
+                            .analyze(
+                                    load = load,
+                                    resource = resource,
+                                    executionIntervals = executionIntervals
+                            )
+                }
+
+                experimentResults.addAll(efficiencyResults)
+            }
+
 
             result = (false !in experimentResults)
             this.results.addExperimentResult(Pair(load, resource), result)
@@ -131,9 +130,9 @@ class ExperimentRunnerImpl(
         )
 
 
-        val from_base: Instant
-        val from_idle: Instant
-        val from_load: Instant
+        val fromBase: Instant
+        val fromIdle: Instant
+        val fromLoad: Instant
         val timestamps: MutableList<Triple<String,Instant,Instant>> = mutableListOf()
 
         try {
@@ -143,7 +142,7 @@ class ExperimentRunnerImpl(
 
 
 
-            from_base = Instant.now()
+            fromBase = Instant.now()
 
             this.waitAndLog()
 
@@ -172,8 +171,8 @@ class ExperimentRunnerImpl(
             throw ExecutionFailedException("Error during setup the experiment", e)
         }
 
-        val to_base = Instant.now()
-        timestamps.add(Triple("base",from_base,to_base))
+        val toBase = Instant.now()
+        timestamps.add(Triple("base",fromBase,toBase))
 
 
 
@@ -187,7 +186,7 @@ class ExperimentRunnerImpl(
 
 
 
-            from_idle = Instant.now()
+            fromIdle = Instant.now()
 
             this.waitAndLog()
 
@@ -216,8 +215,8 @@ class ExperimentRunnerImpl(
             throw ExecutionFailedException("Error during setup the experiment", e)
         }
 
-        val to_idle = Instant.now()
-        timestamps.add(Triple("idle",from_idle,to_idle))
+        val toIdle = Instant.now()
+        timestamps.add(Triple("idle",fromIdle,toIdle))
 
 
 
@@ -233,7 +232,7 @@ class ExperimentRunnerImpl(
 
 
 
-            from_load = Instant.now()
+            fromLoad = Instant.now()
 
             this.waitAndLog()
 
@@ -262,8 +261,8 @@ class ExperimentRunnerImpl(
             throw ExecutionFailedException("Error during setup the experiment", e)
         }
 
-        val to_load = Instant.now()
-        timestamps.add(Triple("load",from_load,to_load))
+        val toLoad = Instant.now()
+        timestamps.add(Triple("load",fromLoad,toLoad))
 
 
 

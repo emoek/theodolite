@@ -13,6 +13,7 @@ class SloConfigHandler {
         fun getQueryString(slo: Slo): String {
             return when (slo.sloType.lowercase()) {
                 SloTypes.GENERIC.value -> slo.properties["promQLQuery"] ?: throw IllegalArgumentException("promQLQuery expected")
+                SloTypes.COLLECT.value -> slo.properties["promQLQuery"] ?: throw IllegalArgumentException("promQLQuery expected")
                 SloTypes.LAG_TREND.value, SloTypes.LAG_TREND_RATIO.value -> slo.properties["promQLQuery"] ?:
                 (slo.properties["consumerGroup"]?.let { "{consumergroup='$it'}" } ?: "").let {
                     "sum by(consumergroup) ($DEFAULT_CONSUMER_LAG_METRIC_BASE$it >= 0)"

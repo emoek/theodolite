@@ -48,6 +48,14 @@ class SloCheckerFactory {
             resources: Int
     ): SloChecker =
             when (SloTypes.from(sloType)) {
+                SloTypes.COLLECT -> ExternalSloChecker(
+                        externalSlopeURL = properties["externalSloUrl"]
+                                ?: throw IllegalArgumentException("externalSloUrl expected"),
+                        // TODO validate property contents
+                        metadata = mapOf(
+
+                        )
+                )
                 SloTypes.GENERIC -> ExternalSloChecker(
                         externalSlopeURL = properties["externalSloUrl"]
                                 ?: throw IllegalArgumentException("externalSloUrl expected"),

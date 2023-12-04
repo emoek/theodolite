@@ -94,7 +94,7 @@ class ExperimentRunnerImpl(
             if (efficiencySlos.isNotEmpty()) {
                 val efficiencyResults = efficiencySlos.map {
                     AnalysisExecutor(slo = it, executionId = executionId)
-                            .analyze(
+                            .analyzeEfficiency(
                                     load = load,
                                     resource = resource,
                                     executionIntervals = executionIntervals

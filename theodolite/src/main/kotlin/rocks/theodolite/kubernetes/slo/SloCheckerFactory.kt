@@ -56,6 +56,24 @@ class SloCheckerFactory {
 
                         )
                 )
+                SloTypes.EFFICIENCY -> ExternalSloChecker(
+                        externalSlopeURL = properties["externalSloUrl"]
+                                ?: throw IllegalArgumentException("externalSloUrl expected"),
+                        // TODO validate property contents
+                        metadata = mapOf(
+                                "warmup" to (properties["warmup"]?.toInt() ?: throw IllegalArgumentException("warmup expected")),
+                                "queryAggregation" to (properties["queryAggregation"]
+                                        ?: throw IllegalArgumentException("queryAggregation expected")),
+                                "repetitionAggregation" to (properties["repetitionAggregation"]
+                                        ?: throw IllegalArgumentException("repetitionAggregation expected")),
+                                "operator" to (properties["operator"] ?: throw IllegalArgumentException("operator expected")),
+                                "threshold" to (properties["threshold"]?.toDoubleOrNull()
+                                        ?: properties["thresholdRelToLoad"]?.toDoubleOrNull()?.times(load)
+                                        ?: properties["thresholdRelToResources"]?.toDoubleOrNull()?.times(resources)
+                                        ?: properties["thresholdFromExpression"]?.let { this.eval(it, load, resources) }
+                                        ?: throw IllegalArgumentException("'threshold', 'thresholdRelToLoad' or 'thresholdRelToResources' or 'thresholdFromExpression' expected"))
+                        )
+                )
                 SloTypes.GENERIC -> ExternalSloChecker(
                         externalSlopeURL = properties["externalSloUrl"]
                                 ?: throw IllegalArgumentException("externalSloUrl expected"),

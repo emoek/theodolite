@@ -79,12 +79,7 @@ class ExternalSloChecker(
     override fun evaluate(fetchedData: List<Pair<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>): Boolean {
         var counter = 0
 
-//        fetchedData.map { Pair(Triple(it.first.first, it.first.second.data?.result ?: listOf(), it.first.third.data?.result ?: listOf()) ,Triple(it.second.first, it.second.second.data?.result ?: listOf(), it.second.third.data?.result ?: listOf())) }
 
-//        val data = SloJson(
-//                results = fetchedData.map { it.data?.result ?: listOf() },
-//                metadata = metadata
-//        ).toJson()
 
         val data = EfficiencySloJson(
                 results = fetchedData.map {

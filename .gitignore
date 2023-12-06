@@ -30,6 +30,8 @@ tmp/
 
 # Python Venv
 .venv
+venv/
+/venv
 
 # Python cache files
 *.pyc

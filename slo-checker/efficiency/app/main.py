@@ -5,7 +5,6 @@ import json
 import sys
 import re
 import pandas as pd
-import csv
 
 
 app = FastAPI()
@@ -116,16 +115,8 @@ async def check_slo(request: Request):
     data = json.loads(await request.body())
     logger.info('Received request with metadata: %s', data['metadata'])
     # Open a file for writing
-    with open('output.csv', 'w', newline='') as file:
-        # Create a CSV writer
-        writer = csv.writer(file)
-
-        # Write the header (keys of the first dictionary in the list)
-        writer.writerow(data[0].keys())
-
-        # Write the data rows
-        for item in data:
-            writer.writerow(item.values())
+    with open('request_data.json', 'w') as file:
+            json.dump(data, file, indent=4)
 
 
     warmup = int(data['metadata']['warmup'])

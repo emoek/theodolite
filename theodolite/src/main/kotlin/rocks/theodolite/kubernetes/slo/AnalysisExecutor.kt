@@ -115,13 +115,13 @@ class AnalysisExecutor(
                         }
 
                     }
-                    if (workload != DEFAULT_WORKLOAD) {
-                        totalDataListWithQuery.add(Pair(dataListWithQuery[0], dataListWithQuery[1]))
-                    } else {
-                        totalDataList.add(Pair(dataList[0],dataList[1]))
-                    }
 
 
+                }
+                if (workload != DEFAULT_WORKLOAD) {
+                    totalDataListWithQuery.add(Pair(dataListWithQuery[0], dataListWithQuery[1]))
+                } else {
+                    totalDataList.add(Pair(dataList[0],dataList[1]))
                 }
 
                 repetitionCounter++

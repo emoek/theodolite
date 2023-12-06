@@ -76,7 +76,7 @@ class ExternalSloChecker(
      * @return true if the experiment was successful (the threshold was not exceeded).
      * @throws ConnectException if the external service could not be reached.
      */
-    override fun evaluate(fetchedData: List<Pair<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>): Boolean {
+    override fun evaluateEfficiencyQuery(fetchedData: List<Pair<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>): Boolean {
         var counter = 0
 
 
@@ -123,7 +123,7 @@ class ExternalSloChecker(
      * @return true if the experiment was successful (the threshold was not exceeded).
      * @throws ConnectException if the external service could not be reached.
      */
-    override fun evaluate(fetchedData: List<Pair<Pair<String,PrometheusResponse>,Pair<String,PrometheusResponse>>>, load: Int): Boolean {
+    override fun evaluateEfficiency(fetchedData: List<Pair<Pair<String,PrometheusResponse>,Pair<String,PrometheusResponse>>>, load: Int): Boolean {
         var counter = 0
         val data = DefaultEfficiencySloJson(
                 results = Pair(fetchedData.map { Pair(Pair(it.first.first,it.first.second.data?.result ?: listOf()), Pair(it.second.first, it.second.second.data?.result ?: listOf()))}, load),

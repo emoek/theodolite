@@ -136,9 +136,9 @@ class AnalysisExecutor(
 
             if (workload != DEFAULT_WORKLOAD) {
 
-                return sloChecker.evaluate(totalDataListWithQuery)
+                return sloChecker.evaluateEfficiencyQuery(totalDataListWithQuery)
             } else {
-                return sloChecker.evaluate(totalDataList, load)
+                return sloChecker.evaluateEfficiency(totalDataList, load)
 
             }
 

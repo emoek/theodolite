@@ -250,10 +250,10 @@ operator:
         limits:
           memory: "128Mi"
           cpu: "100m"
-     efficiency:
+    efficiency:
       enabled: true
       image: emreoe/theodolite-slo-checker-efficiency
-      imageTag: 1.0
+      imageTag: 1.1
       imagePullPolicy: Always
       resources:
         requests:

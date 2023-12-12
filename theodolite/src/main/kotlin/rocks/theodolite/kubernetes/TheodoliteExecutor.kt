@@ -59,8 +59,8 @@ class TheodoliteExecutor(
             )
 
         val slos = SloFactory().createSlos(this.benchmarkExecution, this.benchmark)
-
         if (!benchmarkExecution.execution.stages) {
+            logger.info { "The stage based ExperimentRunner Implementation is being used: ${benchmarkExecution.execution.stages} " }
             experimentRunner =
                     ExperimentRunnerImpl(
                             benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
@@ -79,6 +79,7 @@ class TheodoliteExecutor(
                     )
 
         } else {
+            logger.info { "The stage based ExperimentRunner Implementation is being used: ${benchmarkExecution.execution.stages} " }
             experimentRunner =
                     StageBasedExperimentRunnerImpl(
                             benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),

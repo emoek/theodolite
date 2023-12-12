@@ -60,22 +60,43 @@ class TheodoliteExecutor(
 
         val slos = SloFactory().createSlos(this.benchmarkExecution, this.benchmark)
 
-        experimentRunner =
-            ExperimentRunnerImpl(
-                benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
-                results = results,
-                executionDuration = executionDuration,
-                configurationOverrides = benchmarkExecution.configOverrides,
-                slos = slos,
-                repetitions = benchmarkExecution.execution.repetitions,
-                executionId = benchmarkExecution.executionId,
-                loadGenerationDelay = benchmarkExecution.execution.loadGenerationDelay,
-                afterTeardownDelay = benchmarkExecution.execution.afterTeardownDelay,
-                executionName = benchmarkExecution.name,
-                loadPatcherDefinitions = loadDimensionPatcherDefinition,
-                resourcePatcherDefinitions = resourcePatcherDefinition,
-                waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
-            )
+        if (!benchmarkExecution.execution.stages) {
+            experimentRunner =
+                    ExperimentRunnerImpl(
+                            benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
+                            results = results,
+                            executionDuration = executionDuration,
+                            configurationOverrides = benchmarkExecution.configOverrides,
+                            slos = slos,
+                            repetitions = benchmarkExecution.execution.repetitions,
+                            executionId = benchmarkExecution.executionId,
+                            loadGenerationDelay = benchmarkExecution.execution.loadGenerationDelay,
+                            afterTeardownDelay = benchmarkExecution.execution.afterTeardownDelay,
+                            executionName = benchmarkExecution.name,
+                            loadPatcherDefinitions = loadDimensionPatcherDefinition,
+                            resourcePatcherDefinitions = resourcePatcherDefinition,
+                            waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
+                    )
+
+        } else {
+            experimentRunner =
+                    StageBasedExperimentRunnerImpl(
+                            benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
+                            results = results,
+                            executionDuration = executionDuration,
+                            configurationOverrides = benchmarkExecution.configOverrides,
+                            slos = slos,
+                            repetitions = benchmarkExecution.execution.repetitions,
+                            executionId = benchmarkExecution.executionId,
+                            loadGenerationDelay = benchmarkExecution.execution.loadGenerationDelay,
+                            afterTeardownDelay = benchmarkExecution.execution.afterTeardownDelay,
+                            executionName = benchmarkExecution.name,
+                            loadPatcherDefinitions = loadDimensionPatcherDefinition,
+                            resourcePatcherDefinitions = resourcePatcherDefinition,
+                            waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
+                    )
+
+        }
 
         if (benchmarkExecution.load.loadValues != benchmarkExecution.load.loadValues.sorted()) {
             benchmarkExecution.load.loadValues = benchmarkExecution.load.loadValues.sorted()

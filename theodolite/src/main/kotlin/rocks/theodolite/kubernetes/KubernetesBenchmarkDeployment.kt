@@ -81,6 +81,21 @@ class KubernetesBenchmarkDeployment(
 //            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             rolloutManager.rollout(loadGenResources)
+        } else {
+            if (this.topics.isNotEmpty()) {
+                val kafkaTopics = this.topics
+                        .filter { !it.removeOnly }
+                        .map { NewTopic(it.name, it.numPartitions, it.replicationFactor) }
+                kafkaController.createTopics(kafkaTopics)
+            }
+
+            sutBeforeActions.forEach { it.exec(client = client) }
+            rolloutManager.rollout(appResources)
+            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
+            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
+            loadGenBeforeActions.forEach { it.exec(client = client) }
+            rolloutManager.rollout(loadGenResources)
+
         }
 
 

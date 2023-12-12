@@ -27,6 +27,11 @@ class EfficiencySloJson(
 ) : AbstractSloJson()
 
 
+class StageBasedSloJson(
+        override val results: Pair<List<Triple<Triple<String,List<PromResult>,List<PromResult>>,Triple<String,List<PromResult>,List<PromResult>>,Triple<String,List<PromResult>,List<PromResult>>>>, Int>,
+        override var metadata: Map<String, Any>
+) : AbstractSloJson()
+
 class DefaultEfficiencySloJson(
         override val results: Pair<List<Pair<Pair<String, List<PromResult>>,Pair<String, List<PromResult>>>>, Int>,
         override var metadata: Map<String, Any>

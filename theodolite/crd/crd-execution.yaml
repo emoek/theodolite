@@ -97,6 +97,10 @@ spec:
                   duration:
                     description: Defines the duration of each experiment in seconds.
                     type: integer
+                  stages:
+                    description: Whether to differ between Base, Idle and Load stage or not.
+                    type: boolean
+                    default: false
                   repetitions:
                     description: Number of repititions for each experiment.
                     type: integer

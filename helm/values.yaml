@@ -128,13 +128,16 @@ kube-prometheus-stack:
           allowUiUpdates: true
       datasources:
         enabled: true
-        datasources.yaml:
-          - name: Prometheus
-            url: http://prometheus-operated:9090/
-            isDefault: true
-          - name: Loki
-            url: http://loki:3100
-            isDefault: false    
+        datasources:
+           - apiVersion: 1
+           - name: Prometheus
+             type: prometheus
+             url: http://prometheus-operated:9090/
+             isDefault: true
+           - name: Loki
+             type: loki
+             url: http://loki:3100/
+             isDefault: false     
     service:
       nodePort: 31199
       type: NodePort

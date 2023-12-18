@@ -63,7 +63,7 @@ kube-prometheus-stack:
       create: true # enable for full-stack monitoring
   
   grafana:
-    defaultDashboardsEnabled: true
+    defaultDashboardsEnabled: false
 
   kubelet:
     enabled: true

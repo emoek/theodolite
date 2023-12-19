@@ -124,7 +124,7 @@ class ExternalSloChecker(
      * @return true if the experiment was successful (the threshold was not exceeded).
      * @throws ConnectException if the external service could not be reached.
      */
-    override fun evaluateStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>>, load: Int): Boolean {
+    override fun evaluateLogAndStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>>, load: Int): Boolean {
         var counter = 0
 
 

@@ -119,6 +119,7 @@ class StageBasedAnalysisExecutor(
             // ALL: + load
 //            val total: MutableList<Triple<Pair<String,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>
             val total: MutableList<Triple<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
+            val totalWithLogs: MutableList<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>> = mutableListOf()
 
 //            // TYPE1: load / l       List -> Pair
 //            val totalDataList: MutableList<Pair<String,PrometheusResponse>> = mutableListOf()
@@ -139,9 +140,13 @@ class StageBasedAnalysisExecutor(
                 val idleTime: Triple<String,Instant,Instant> = intervalList[1]
                 val baseTime: Triple<String,Instant,Instant> = intervalList[0]
 
+
                 var workloadDataBase = PrometheusResponse()
                 var workloadDataIdle = PrometheusResponse()
                 var workloadDataLoad = PrometheusResponse()
+                var logWorkloadDataBase = LokiResponse()
+                var logWorkloadDataIdle = LokiResponse()
+                var logWorkloadDataLoad = LokiResponse()
 
                 val prometheusDataLoad = fetcher.fetchMetric(
                         start = loadTime.second,
@@ -172,21 +177,21 @@ class StageBasedAnalysisExecutor(
                                 prometheusURL = workloadUrl,
                                 offset = Duration.ofHours(slo.offset.toLong())
                         )
-                        workloadDataLoad = fetcher.fetchMetric(
+                        logWorkloadDataLoad = fetcher.fetchLogs(
                                 start = loadTime.second,
                                 end = loadTime.third,
                                 stepSize = stepSize,
                                 query = workload
                         )
 
-                        workloadDataIdle = fetcher.fetchMetric(
+                        logWorkloadDataIdle = fetcher.fetchLogs(
                                 start = idleTime.second,
                                 end = idleTime.third,
                                 stepSize = stepSize,
                                 query = workload
                         )
 
-                        workloadDataBase = fetcher.fetchMetric(
+                        logWorkloadDataBase = fetcher.fetchLogs(
                                 start = baseTime.second,
                                 end = baseTime.third,
                                 stepSize = stepSize,
@@ -224,7 +229,14 @@ class StageBasedAnalysisExecutor(
 
 
 
-                total.add(Triple(Triple(baseTime.first, prometheusDataBase,workloadDataBase), Triple(idleTime.first,prometheusDataIdle, workloadDataIdle), Triple(loadTime.first,prometheusDataLoad,workloadDataLoad)))
+                if (workloadUrl != DEFAULT_WORKLOADURL) {
+                    totalWithLogs.add(Triple(Triple(baseTime.first, prometheusDataBase,logWorkloadDataBase), Triple(idleTime.first,prometheusDataIdle, logWorkloadDataIdle), Triple(loadTime.first,prometheusDataLoad,logWorkloadDataLoad)))
+
+
+                } else {
+                    total.add(Triple(Triple(baseTime.first, prometheusDataBase,workloadDataBase), Triple(idleTime.first,prometheusDataIdle, workloadDataIdle), Triple(loadTime.first,prometheusDataLoad,workloadDataLoad)))
+
+                }
             }
 
 
@@ -423,7 +435,11 @@ class StageBasedAnalysisExecutor(
             resources = resource
             )
 
-            return sloChecker.evaluateStageBased(total,load)
+            if (workloadUrl != DEFAULT_WORKLOADURL) {
+                return sloChecker.evaluateStageBased(totalWithLogs,load)
+            } else {
+                return sloChecker.evaluateStageBased(total, load)
+            }
 
 //            executionIntervals.forEach { intervalList ->
 //                val dataListWithQuery: MutableList<Triple<String,PrometheusResponse,PrometheusResponse>> = mutableListOf()

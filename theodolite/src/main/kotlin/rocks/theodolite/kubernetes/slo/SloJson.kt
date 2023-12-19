@@ -1,4 +1,5 @@
 import com.fasterxml.jackson.databind.ObjectMapper
+import rocks.theodolite.kubernetes.slo.LokiResult
 import rocks.theodolite.kubernetes.slo.PromResult
 import rocks.theodolite.kubernetes.slo.PrometheusResponse
 
@@ -29,6 +30,11 @@ class EfficiencySloJson(
 
 class StageBasedSloJson(
         override val results: Pair<List<Triple<Triple<String,List<PromResult>,List<PromResult>>,Triple<String,List<PromResult>,List<PromResult>>,Triple<String,List<PromResult>,List<PromResult>>>>, Int>,
+        override var metadata: Map<String, Any>
+) : AbstractSloJson()
+
+class LogAndStageBasedSloJson(
+        override val results: Pair<List<Triple<Triple<String,List<PromResult>,List<LokiResult>>,Triple<String,List<PromResult>,List<LokiResult>>,Triple<String,List<PromResult>,List<LokiResult>>>>, Int>,
         override var metadata: Map<String, Any>
 ) : AbstractSloJson()
 

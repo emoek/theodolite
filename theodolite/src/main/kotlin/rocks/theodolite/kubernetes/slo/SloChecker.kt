@@ -39,4 +39,14 @@ interface SloChecker {
      * @return true if experiments were successful. Otherwise, false.
      */
     fun evaluateStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>, load: Int): Boolean
+
+
+
+    /**
+     * Evaluates [fetchedData] and returns if the experiments were successful.
+     *
+     * @param fetchedData from Prometheus that will be evaluated.
+     * @return true if experiments were successful. Otherwise, false.
+     */
+    fun evaluateStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>>, load: Int): Boolean
 }

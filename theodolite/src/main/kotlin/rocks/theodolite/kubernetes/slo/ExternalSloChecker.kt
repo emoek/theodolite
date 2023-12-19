@@ -2,6 +2,7 @@ package rocks.theodolite.kubernetes.slo
 
 import DefaultEfficiencySloJson
 import EfficiencySloJson
+import LogAndStageBasedSloJson
 import SloJson
 import StageBasedSloJson
 import mu.KotlinLogging
@@ -113,6 +114,51 @@ class ExternalSloChecker(
         throw ConnectException("Could not reach external SLO checker at $externalSlopeURL.")
     }
 
+
+    /**
+     * Evaluates an experiment using an external service.
+     * Will try to reach the external service until success or [RETRIES] times.
+     * Each request will time out after [TIMEOUT].
+     *
+     * @param fetchedData that should be evaluated
+     * @return true if the experiment was successful (the threshold was not exceeded).
+     * @throws ConnectException if the external service could not be reached.
+     */
+    override fun evaluateStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>>, load: Int): Boolean {
+        var counter = 0
+
+
+
+        val data = LogAndStageBasedSloJson(
+                results = Pair(fetchedData.map {
+                    Triple(Triple(it.first.first,it.first.second.data?.result ?: listOf(),it.first.third.data?.result ?: listOf()),Triple(it.second.first,it.second.second.data?.result ?: listOf(),it.second.third.data?.result ?: listOf()),Triple(it.third.first,it.third.second.data?.result ?: listOf(),it.third.third.data?.result ?: listOf()))
+                }, load),
+                metadata = metadata
+        ).toJson()
+
+
+        while (counter < RETRIES) {
+            val request = HttpRequest.newBuilder()
+                    .uri(URI.create(externalSlopeURL))
+                    .POST(HttpRequest.BodyPublishers.ofString(data))
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .timeout(TIMEOUT)
+                    .build()
+            val response = HttpClient.newBuilder()
+                    .build()
+                    .send(request, BodyHandlers.ofString())
+            if (response.statusCode() != 200) {
+                counter++
+                logger.error { "Received status code ${response.statusCode()} for request to $externalSlopeURL." }
+            } else {
+                val booleanResult = response.body().toBoolean()
+                logger.info { "SLO checker result is: $booleanResult." }
+                return booleanResult
+            }
+        }
+
+        throw ConnectException("Could not reach external SLO checker at $externalSlopeURL.")
+    }
 
     /**
      * Evaluates an experiment using an external service.

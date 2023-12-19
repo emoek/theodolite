@@ -42,8 +42,8 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         var counter = 0
 
         while (counter < RETRIES) {
+            logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
-            logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd] and query $encodedQuery." }
 //            logger.info { "Log query: {$encodedQuery}" }
             val request = HttpRequest.newBuilder()
                     .uri(URI.create(
@@ -71,6 +71,52 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
     }
 
     /**
+     * Tries to fetch a metric by a query to a Prometheus server.
+     * Retries to fetch the metric [RETRIES] times.
+     * Connects to the server via [prometheusURL].
+     *
+     * @param start start point of the query.
+     * @param end end point of the query.
+     * @param query query for the prometheus server.
+     * @throws ConnectException - if the prometheus server timed out/was not reached.
+     */
+    fun fetchLogs(start: Instant, end: Instant, stepSize: Duration, query: String): LokiResponse {
+
+        val offsetStart = start.minus(offset)
+        val offsetEnd = end.minus(offset)
+
+        var counter = 0
+
+        while (counter < RETRIES) {
+            logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
+            val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
+//            logger.info { "Log query: {$encodedQuery}" }
+            val request = HttpRequest.newBuilder()
+                    .uri(URI.create(
+                            "$prometheusURL/loki/api/v1/query_range?query=$encodedQuery&start=$offsetStart&end=$offsetEnd&step=${stepSize.toSeconds()}s"))
+                    .GET()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .timeout(TIMEOUT)
+                    .build()
+            val response = HttpClient.newBuilder()
+                    .build()
+                    .send(request, HttpResponse.BodyHandlers.ofString())
+            if (response.statusCode() != 200) {
+                val message = response.body()
+                logger.warn { "Could not connect to Prometheus: $message. Retry $counter/$RETRIES." }
+                counter++
+            } else {
+//                val values = parseValues(response.body())
+//                if (values.data?.result.isNullOrEmpty()) {
+//                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
+//                }
+                return parseLogValues(response.body())
+            }
+        }
+        throw ConnectException("No answer from Prometheus received.")
+    }
+
+    /**
      * Deserializes a response from Prometheus.
      * @param values Response from Prometheus.
      * @return a [PrometheusResponse]
@@ -79,6 +125,18 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         return ObjectMapper().readValue<PrometheusResponse>(
             values,
             PrometheusResponse::class.java
+        )
+    }
+
+    /**
+     * Deserializes a response from Prometheus.
+     * @param values Response from Prometheus.
+     * @return a [PrometheusResponse]
+     */
+    private fun parseLogValues(values: String): LokiResponse {
+        return ObjectMapper().readValue<LokiResponse>(
+                values,
+                LokiResponse::class.java
         )
     }
 }

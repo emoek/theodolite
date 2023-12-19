@@ -436,7 +436,7 @@ class StageBasedAnalysisExecutor(
             )
 
             if (workloadUrl != DEFAULT_WORKLOADURL) {
-                return sloChecker.evaluateStageBased(totalWithLogs,load)
+                return sloChecker.evaluateLogAndStageBased(totalWithLogs,load)
             } else {
                 return sloChecker.evaluateStageBased(total, load)
             }

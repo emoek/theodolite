@@ -46,6 +46,7 @@ data class LokiResponse(
  * Description of Loki data.
  */
 @RegisterForReflection
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class LokiData(
         var resultType: String? = null,
         var result: List<LokiResult>? = null

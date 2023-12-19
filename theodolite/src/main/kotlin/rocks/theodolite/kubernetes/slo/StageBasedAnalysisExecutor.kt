@@ -12,6 +12,7 @@ private val DEFAULT_STEP_SIZE = Duration.ofSeconds(5)
 private val DEFAULT_STAGE = listOf("load")
 private val DEFAULT_WORKLOAD = "workload"
 private val DEFAULT_TYPE = 1
+private val DEFAULT_WORKLOADURL = "prometheus"
 
 class StageBasedAnalysisExecutor(
         private val slo: KubernetesBenchmark.Slo,
@@ -49,6 +50,7 @@ class StageBasedAnalysisExecutor(
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
 
             val stages = slo.properties["stages"]?.lowercase()?.split("+") ?: DEFAULT_STAGE
+
 
 
             executionIntervals.forEach { intervalList ->
@@ -110,6 +112,8 @@ class StageBasedAnalysisExecutor(
             val type = slo.properties["type"]?.lowercase()?.toInt() ?: DEFAULT_TYPE
 //            val staged = slo.properties["staged"]?.toBoolean() ?: false
 
+            val workloadUrl = slo.properties["workloadUrl"]?.lowercase() ?: DEFAULT_WORKLOADURL
+
 
 
             // ALL: + load
@@ -139,30 +143,6 @@ class StageBasedAnalysisExecutor(
                 var workloadDataIdle = PrometheusResponse()
                 var workloadDataLoad = PrometheusResponse()
 
-                if (workload != DEFAULT_WORKLOAD) {
-                    workloadDataLoad = fetcher.fetchMetric(
-                            start = loadTime.second,
-                            end = loadTime.third,
-                            stepSize = stepSize,
-                            query = workload
-                    )
-
-                    workloadDataIdle = fetcher.fetchMetric(
-                            start = idleTime.second,
-                            end = idleTime.third,
-                            stepSize = stepSize,
-                            query = workload
-                    )
-
-                    workloadDataBase = fetcher.fetchMetric(
-                            start = baseTime.second,
-                            end = baseTime.third,
-                            stepSize = stepSize,
-                            query = workload
-                    )
-
-                }
-
                 val prometheusDataLoad = fetcher.fetchMetric(
                         start = loadTime.second,
                         end = loadTime.third,
@@ -183,6 +163,62 @@ class StageBasedAnalysisExecutor(
                         stepSize = stepSize,
                         query = SloConfigHandler.getQueryString(slo = slo)
                 )
+
+
+                if (workload != DEFAULT_WORKLOAD) {
+
+                    if (workloadUrl != DEFAULT_WORKLOADURL) {
+                        workloadDataLoad = fetcher.fetchMetric(
+                                start = loadTime.second,
+                                end = loadTime.third,
+                                stepSize = stepSize,
+                                query = workloadUrl
+                        )
+
+                        workloadDataIdle = fetcher.fetchMetric(
+                                start = idleTime.second,
+                                end = idleTime.third,
+                                stepSize = stepSize,
+                                query = workloadUrl
+                        )
+
+                        workloadDataBase = fetcher.fetchMetric(
+                                start = baseTime.second,
+                                end = baseTime.third,
+                                stepSize = stepSize,
+                                query = workloadUrl
+                        )
+                    } else {
+
+                        workloadDataLoad = fetcher.fetchMetric(
+                                start = loadTime.second,
+                                end = loadTime.third,
+                                stepSize = stepSize,
+                                query = workload
+                        )
+
+//                        if (workloadDataLoad.data?.result.isNullOrEmpty()) {
+//
+//                        }
+
+                        workloadDataIdle = fetcher.fetchMetric(
+                                start = idleTime.second,
+                                end = idleTime.third,
+                                stepSize = stepSize,
+                                query = workload
+                        )
+
+                        workloadDataBase = fetcher.fetchMetric(
+                                start = baseTime.second,
+                                end = baseTime.third,
+                                stepSize = stepSize,
+                                query = workload
+                        )
+                    }
+
+                }
+
+
 
                 total.add(Triple(Triple(baseTime.first, prometheusDataBase,workloadDataBase), Triple(idleTime.first,prometheusDataIdle, workloadDataIdle), Triple(loadTime.first,prometheusDataLoad,workloadDataLoad)))
             }

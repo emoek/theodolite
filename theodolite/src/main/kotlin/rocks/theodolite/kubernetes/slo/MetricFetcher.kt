@@ -59,10 +59,10 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
                 logger.warn { "Could not connect to Prometheus: $message. Retry $counter/$RETRIES." }
                 counter++
             } else {
-                val values = parseValues(response.body())
-                if (values.data?.result.isNullOrEmpty()) {
-                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
-                }
+//                val values = parseValues(response.body())
+//                if (values.data?.result.isNullOrEmpty()) {
+//                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
+//                }
                 return parseValues(response.body())
             }
         }

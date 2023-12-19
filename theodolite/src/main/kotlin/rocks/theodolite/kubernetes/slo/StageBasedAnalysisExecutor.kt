@@ -168,25 +168,29 @@ class StageBasedAnalysisExecutor(
                 if (workload != DEFAULT_WORKLOAD) {
 
                     if (workloadUrl != DEFAULT_WORKLOADURL) {
+                        val fetcher = MetricFetcher(
+                                prometheusURL = workloadUrl,
+                                offset = Duration.ofHours(slo.offset.toLong())
+                        )
                         workloadDataLoad = fetcher.fetchMetric(
                                 start = loadTime.second,
                                 end = loadTime.third,
                                 stepSize = stepSize,
-                                query = workloadUrl
+                                query = workload
                         )
 
                         workloadDataIdle = fetcher.fetchMetric(
                                 start = idleTime.second,
                                 end = idleTime.third,
                                 stepSize = stepSize,
-                                query = workloadUrl
+                                query = workload
                         )
 
                         workloadDataBase = fetcher.fetchMetric(
                                 start = baseTime.second,
                                 end = baseTime.third,
                                 stepSize = stepSize,
-                                query = workloadUrl
+                                query = workload
                         )
                     } else {
 

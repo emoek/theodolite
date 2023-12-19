@@ -42,9 +42,9 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         var counter = 0
 
         while (counter < RETRIES) {
-            logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
-            logger.info { "Log query: {$encodedQuery}" }
+            logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd] and query $encodedQuery." }
+//            logger.info { "Log query: {$encodedQuery}" }
             val request = HttpRequest.newBuilder()
                     .uri(URI.create(
                             "$prometheusURL/api/v1/query_range?query=$encodedQuery&start=$offsetStart&end=$offsetEnd&step=${stepSize.toSeconds()}s"))

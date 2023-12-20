@@ -140,6 +140,8 @@ class StageBasedExperimentRunnerImpl(
 
         try {
 
+            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the Infrastructure operations." }
+            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             benchmarkDeployment.setup("base")
 
 

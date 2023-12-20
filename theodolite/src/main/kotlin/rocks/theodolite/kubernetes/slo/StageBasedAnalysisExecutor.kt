@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 private val DEFAULT_STEP_SIZE = Duration.ofSeconds(5)
 private val DEFAULT_STAGE = listOf("load")
 private val DEFAULT_WORKLOAD = "workload"
-private val DEFAULT_TYPE = 1
+//private val DEFAULT_TYPE = 1
 private val DEFAULT_WORKLOADURL = "prometheus"
 
 class StageBasedAnalysisExecutor(
@@ -50,32 +50,71 @@ class StageBasedAnalysisExecutor(
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
 
             val stages = slo.properties["stages"]?.lowercase()?.split("+") ?: DEFAULT_STAGE
+            val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
+            val workloadUrl = slo.properties["workloadUrl"]?.lowercase() ?: DEFAULT_WORKLOADURL
 
 
 
-            executionIntervals.forEach { intervalList ->
-                intervalList.forEach { (stage, start, end) ->
+
+
+            if (slo.prometheusUrl.contains("loki")) {
+                executionIntervals.forEach { intervalList ->
+                    intervalList.forEach { (stage, start, end) ->
 
 
 
-                    if (stage in listOf("base", "idle", "load") && stages.contains(stage)) {
+                        if (stage in listOf("base", "idle", "load") && stages.contains(stage)) {
 
-                        // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
-                        val prometheusData = fetcher.fetchMetric(
-                                start = start,
-                                end = end,
-                                stepSize = stepSize,
-                                query = SloConfigHandler.getQueryString(slo = slo)
-                        )
 
-                        ioHandler.writeToCSVFile(
-                                fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
-                                data = prometheusData.getAllResultAsList(),
-                                columns = listOf("labels", "timestamp", "value")
-                        )
+                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
+                            val lokiData = fetcher.fetchLogs(
+                                    start = start,
+                                    end = end,
+                                    stepSize = stepSize,
+                                    query = SloConfigHandler.getQueryString(slo = slo)
+                            )
+
+                            ioHandler.writeToCSVFile(
+                                    fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
+                                    data = lokiData.getResultAsList(),
+                                    columns = listOf("labels", "timestamp", "value")
+                            )
+
+
+                        }
                     }
+                    repetitionCounter++
                 }
-                repetitionCounter++
+
+            } else {
+
+                executionIntervals.forEach { intervalList ->
+                    intervalList.forEach { (stage, start, end) ->
+
+
+
+                        if (stage in listOf("base", "idle", "load") && stages.contains(stage)) {
+
+
+                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
+                            val prometheusData = fetcher.fetchMetric(
+                                    start = start,
+                                    end = end,
+                                    stepSize = stepSize,
+                                    query = SloConfigHandler.getQueryString(slo = slo)
+                            )
+
+                            ioHandler.writeToCSVFile(
+                                    fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
+                                    data = prometheusData.getAllResultAsList(),
+                                    columns = listOf("labels", "timestamp", "value")
+                            )
+
+
+                        }
+                    }
+                    repetitionCounter++
+                }
             }
 
 
@@ -109,7 +148,7 @@ class StageBasedAnalysisExecutor(
             //lowercase weg?
             val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
 
-            val type = slo.properties["type"]?.lowercase()?.toInt() ?: DEFAULT_TYPE
+//            val type = slo.properties["type"]?.lowercase()?.toInt() ?: DEFAULT_TYPE
 //            val staged = slo.properties["staged"]?.toBoolean() ?: false
 
             val workloadUrl = slo.properties["workloadUrl"]?.lowercase() ?: DEFAULT_WORKLOADURL
@@ -170,6 +209,12 @@ class StageBasedAnalysisExecutor(
                 )
 
 
+                if (prometheusDataLoad.data?.result.isNullOrEmpty() && prometheusDataIdle.data?.result.isNullOrEmpty() && prometheusDataBase.data?.result.isNullOrEmpty()) {
+                    throw NoSuchFieldException("The prometheus query did not provide any result for all stages.")
+
+                }
+
+
                 if (workload != DEFAULT_WORKLOAD) {
 
                     if (workloadUrl != DEFAULT_WORKLOADURL) {
@@ -197,6 +242,10 @@ class StageBasedAnalysisExecutor(
                                 stepSize = stepSize,
                                 query = workload
                         )
+
+                        if (logWorkloadDataLoad.data?.result.isNullOrEmpty()) {
+                            throw NoSuchFieldException("The loki query did not provide any result for the load stage which is a necessity.")
+                        }
                     } else {
 
                         workloadDataLoad = fetcher.fetchMetric(
@@ -206,9 +255,7 @@ class StageBasedAnalysisExecutor(
                                 query = workload
                         )
 
-//                        if (workloadDataLoad.data?.result.isNullOrEmpty()) {
-//
-//                        }
+
 
                         workloadDataIdle = fetcher.fetchMetric(
                                 start = idleTime.second,
@@ -223,6 +270,10 @@ class StageBasedAnalysisExecutor(
                                 stepSize = stepSize,
                                 query = workload
                         )
+
+                        if (workloadDataLoad.data?.result.isNullOrEmpty()) {
+                            throw NoSuchFieldException("The prometheus query did not provide any result for the workload query in load stage which is a necessity.")
+                        }
                     }
 
                 }

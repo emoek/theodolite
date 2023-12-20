@@ -20,7 +20,7 @@ interface SloChecker {
      * @param fetchedData from Prometheus that will be evaluated.
      * @return true if experiments were successful. Otherwise, false.
      */
-    fun evaluateEfficiencyQuery(fetchedData: List<Pair<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>): Boolean
+//    fun evaluateEfficiencyQuery(fetchedData: List<Pair<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>): Boolean
 
 
     /**
@@ -29,7 +29,7 @@ interface SloChecker {
      * @param fetchedData from Prometheus that will be evaluated.
      * @return true if experiments were successful. Otherwise, false.
      */
-    fun evaluateEfficiency(fetchedData: List<Pair<Pair<String,PrometheusResponse>,Pair<String,PrometheusResponse>>>, load: Int): Boolean
+//    fun evaluateEfficiency(fetchedData: List<Pair<Pair<String,PrometheusResponse>,Pair<String,PrometheusResponse>>>, load: Int): Boolean
 
 
     /**
@@ -49,4 +49,22 @@ interface SloChecker {
      * @return true if experiments were successful. Otherwise, false.
      */
     fun evaluateLogAndStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>>, load: Int): Boolean
+
+    /**
+     * Evaluates [fetchedData] and returns if the experiments were successful.
+     *
+     * @param fetchedData from Prometheus that will be evaluated.
+     * @return true if experiments were successful. Otherwise, false.
+     */
+    fun evaluateLogEfficiency(fetchedData: Pair<List<PrometheusResponse>, List<LokiResponse>>, load: Int): Boolean
+
+    /**
+     * Evaluates [fetchedData] and returns if the experiments were successful.
+     *
+     * @param fetchedData from Prometheus that will be evaluated.
+     * @return true if experiments were successful. Otherwise, false.
+     */
+    fun evaluateEfficiency(fetchedData: Pair<List<PrometheusResponse>, List<PrometheusResponse>>, load: Int): Boolean
 }
+
+

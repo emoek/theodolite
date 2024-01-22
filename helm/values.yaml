@@ -262,7 +262,7 @@ operator:
     efficiency:
       enabled: true
       image: emreoe/theodolite-slo-checker-efficiency
-      imageTag: 1.1
+      imageTag: 1.2
       imagePullPolicy: Always
       resources:
         requests:

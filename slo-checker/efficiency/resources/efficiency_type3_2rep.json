@@ -1,0 +1,930 @@
+{
+    "results": {
+        "first": [
+            {
+                "first": {
+                    "first": "base",
+                    "second": [
+                        {
+                            "metric": {},
+                            "values": [
+                                [
+                                    1705845741.365,
+                                    "0.5863150622295793"
+                                ],
+                                [
+                                    1705845744.365,
+                                    "0.5833115225812825"
+                                ],
+                                [
+                                    1705845747.365,
+                                    "0.6216073229058293"
+                                ],
+                                [
+                                    1705845750.365,
+                                    "0.6350538264671826"
+                                ],
+                                [
+                                    1705845753.365,
+                                    "0.6221805085550259"
+                                ],
+                                [
+                                    1705845756.365,
+                                    "0.6284398718368543"
+                                ],
+                                [
+                                    1705845759.365,
+                                    "0.6272396911586782"
+                                ],
+                                [
+                                    1705845762.365,
+                                    "0.6612426379007468"
+                                ],
+                                [
+                                    1705845765.365,
+                                    "0.6580732250658528"
+                                ],
+                                [
+                                    1705845768.365,
+                                    "0.6632619207623813"
+                                ],
+                                [
+                                    1705845771.365,
+                                    "0.6734262185937022"
+                                ],
+                                [
+                                    1705845774.365,
+                                    "0.6900737570411103"
+                                ],
+                                [
+                                    1705845777.365,
+                                    "0.6676189783990544"
+                                ],
+                                [
+                                    1705845780.365,
+                                    "0.6679551036908283"
+                                ],
+                                [
+                                    1705845783.365,
+                                    "0.6592204127484387"
+                                ],
+                                [
+                                    1705845786.365,
+                                    "0.6136799728715491"
+                                ],
+                                [
+                                    1705845789.365,
+                                    "0.6264117701727995"
+                                ],
+                                [
+                                    1705845792.365,
+                                    "0.6130229170414156"
+                                ],
+                                [
+                                    1705845795.365,
+                                    "0.6544848542482655"
+                                ],
+                                [
+                                    1705845798.365,
+                                    "0.6296950473619378"
+                                ],
+                                [
+                                    1705845801.365,
+                                    "0.6217528575300579"
+                                ]
+                            ]
+                        }
+                    ],
+                    "third": []
+                },
+                "second": {
+                    "first": "idle",
+                    "second": [
+                        {
+                            "metric": {},
+                            "values": [
+                                [
+                                    1705845820.108,
+                                    "0.6890206617973115"
+                                ],
+                                [
+                                    1705845823.108,
+                                    "0.7432517670640105"
+                                ],
+                                [
+                                    1705845826.108,
+                                    "0.9094907487065239"
+                                ],
+                                [
+                                    1705845829.108,
+                                    "1.379132795920956"
+                                ],
+                                [
+                                    1705845832.108,
+                                    "1.8275872411143212"
+                                ],
+                                [
+                                    1705845835.108,
+                                    "2.0222328422334233"
+                                ],
+                                [
+                                    1705845838.108,
+                                    "2.423101767229368"
+                                ],
+                                [
+                                    1705845841.108,
+                                    "2.4498725560147596"
+                                ],
+                                [
+                                    1705845844.108,
+                                    "2.346649193075989"
+                                ],
+                                [
+                                    1705845847.108,
+                                    "2.4022306222940033"
+                                ],
+                                [
+                                    1705845850.108,
+                                    "2.430071198284"
+                                ],
+                                [
+                                    1705845853.108,
+                                    "2.6982523639897575"
+                                ],
+                                [
+                                    1705845856.108,
+                                    "3.1428790018515915"
+                                ],
+                                [
+                                    1705845859.108,
+                                    "3.2781227146323957"
+                                ],
+                                [
+                                    1705845862.108,
+                                    "3.5389387990531898"
+                                ],
+                                [
+                                    1705845865.108,
+                                    "3.9879194792175277"
+                                ],
+                                [
+                                    1705845868.108,
+                                    "4.453942654085093"
+                                ],
+                                [
+                                    1705845871.108,
+                                    "5.093598670321874"
+                                ],
+                                [
+                                    1705845874.108,
+                                    "5.193039248491694"
+                                ],
+                                [
+                                    1705845877.108,
+                                    "4.268361378498443"
+                                ],
+                                [
+                                    1705845880.108,
+                                    "3.7609326547991686"
+                                ]
+                            ]
+                        }
+                    ],
+                    "third": []
+                },
+                "third": {
+                    "first": "load",
+                    "second": [
+                        {
+                            "metric": {},
+                            "values": [
+                                [
+                                    1705845891.665,
+                                    "3.8104147628457454"
+                                ],
+                                [
+                                    1705845894.665,
+                                    "3.605353268380823"
+                                ],
+                                [
+                                    1705845897.665,
+                                    "3.738329578458841"
+                                ],
+                                [
+                                    1705845900.665,
+                                    "3.4097404266375926"
+                                ],
+                                [
+                                    1705845903.665,
+                                    "3.4013477025664884"
+                                ],
+                                [
+                                    1705845906.665,
+                                    "3.5392422462627047"
+                                ],
+                                [
+                                    1705845909.665,
+                                    "3.1704682358675518"
+                                ],
+                                [
+                                    1705845912.665,
+                                    "3.2051918357777947"
+                                ],
+                                [
+                                    1705845915.665,
+                                    "3.1507177294635453"
+                                ],
+                                [
+                                    1705845918.665,
+                                    "3.144182914074155"
+                                ],
+                                [
+                                    1705845921.665,
+                                    "3.160606418708977"
+                                ],
+                                [
+                                    1705845924.665,
+                                    "3.3080462459159072"
+                                ],
+                                [
+                                    1705845927.665,
+                                    "3.1963474654756046"
+                                ],
+                                [
+                                    1705845930.665,
+                                    "3.224716575394275"
+                                ],
+                                [
+                                    1705845933.665,
+                                    "3.134495047845916"
+                                ],
+                                [
+                                    1705845936.665,
+                                    "3.0725498812767897"
+                                ],
+                                [
+                                    1705845939.665,
+                                    "2.999819592668398"
+                                ],
+                                [
+                                    1705845942.665,
+                                    "2.9905691006321007"
+                                ],
+                                [
+                                    1705845945.665,
+                                    "2.6784525926515235"
+                                ],
+                                [
+                                    1705845948.665,
+                                    "2.175710116183947"
+                                ],
+                                [
+                                    1705845951.665,
+                                    "1.599851190778585"
+                                ]
+                            ]
+                        }
+                    ],
+                    "third": [
+                        {
+                            "stream": {
+                                "job": "rabbitmq-logs",
+                                "filename": "/symlogs/sym-kieker-output.dat"
+                            },
+                            "values": [
+                                [
+                                    "1705845898662774161",
+                                    "$0;1705845898662774161;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306153;1705845898640386561;1705845898662760661;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845898634781160",
+                                    "$0;1705845898634781160;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306152;1705845898620273660;1705845898634754560;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845898616749960",
+                                    "$0;1705845898616749960;protected void tools.descartes.teastore.webui.servlet.CartServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306151;1705845898478066457;1705845898616732860;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845898473842957",
+                                    "$0;1705845898473842957;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306150;1705845898447524556;1705845898473818957;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845898441654256",
+                                    "$0;1705845898441654256;protected void tools.descartes.teastore.webui.servlet.CategoryServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306149;1705845898301972153;1705845898441629656;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845898299648952",
+                                    "$0;1705845898299648952;protected void tools.descartes.teastore.webui.servlet.CartServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306148;1705845897665435037;1705845898299634852;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845897662315337",
+                                    "$0;1705845897662315337;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306147;1705845897597289236;1705845897662299337;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845897594736236",
+                                    "$0;1705845897594736236;protected void tools.descartes.teastore.webui.servlet.ProductServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306146;1705845896612441112;1705845897594723036;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845896607130812",
+                                    "$0;1705845896607130812;protected void tools.descartes.teastore.webui.servlet.CategoryServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306130;1705845895616873488;1705845896607115512;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895737685791",
+                                    "$0;1705845895737685791;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306145;1705845895706357390;1705845895737660191;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895716869691",
+                                    "$0;1705845895716869691;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306144;1705845895677388290;1705845895716856591;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895711136390",
+                                    "$0;1705845895711136390;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306143;1705845895674176390;1705845895711123190;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895711078790",
+                                    "$0;1705845895711078790;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306142;1705845895670903590;1705845895711063690;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895689901390",
+                                    "$0;1705845895689901390;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306141;1705845895659505889;1705845895689879190;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895665041589",
+                                    "$0;1705845895665041589;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306136;1705845895634841989;1705845895665020389;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895663834389",
+                                    "$0;1705845895663834389;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306137;1705845895635132489;1705845895663815789;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895662275589",
+                                    "$0;1705845895662275589;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306138;1705845895639284989;1705845895662262889;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895652469089",
+                                    "$0;1705845895652469089;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306140;1705845895652313889;1705845895652452289;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895645351589",
+                                    "$0;1705845895645351589;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306139;1705845895645213489;1705845895645333789;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895636047989",
+                                    "$0;1705845895636047989;protected void tools.descartes.teastore.webui.servlet.CategoryServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306131;1705845895616910688;1705845895636028989;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895631151689",
+                                    "$0;1705845895631151689;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306135;1705845895630983489;1705845895631139489;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895626253788",
+                                    "$0;1705845895626253788;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306134;1705845895626106788;1705845895626237988;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895626253788",
+                                    "$0;1705845895626253788;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306133;1705845895626096288;1705845895626239088;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895623243588",
+                                    "$0;1705845895623243588;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306132;1705845895623085388;1705845895623226388;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895617434688",
+                                    "$0;1705845895617434688;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306128;1705845895616866888;1705845895617419688;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895617434588",
+                                    "$0;1705845895617434588;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306129;1705845895616866788;1705845895617419488;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895617237888",
+                                    "$0;1705845895617237888;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306124;1705845895557187587;1705845895617219688;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895611498388",
+                                    "$0;1705845895611498388;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306127;1705845895557192287;1705845895611487288;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895611320488",
+                                    "$0;1705845895611320488;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306123;1705845895557180187;1705845895611307988;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895610496488",
+                                    "$0;1705845895610496488;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306126;1705845895557188287;1705845895610488188;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895610301588",
+                                    "$0;1705845895610301588;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306125;1705845895557180287;1705845895610289888;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895545960087",
+                                    "$0;1705845895545960087;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306120;1705845894915345871;1705845895545952387;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895545946187",
+                                    "$0;1705845895545946187;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306118;1705845894915327171;1705845895545938187;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895545933787",
+                                    "$0;1705845895545933787;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306122;1705845894915390771;1705845895545917087;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895545933787",
+                                    "$0;1705845895545933787;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306119;1705845894915330871;1705845895545914687;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845895545933787",
+                                    "$0;1705845895545933787;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306121;1705845894915374171;1705845895545920687;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845894899363671",
+                                    "$0;1705845894899363671;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306116;1705845892752916734;1705845894899345671;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845894898789171",
+                                    "$0;1705845894898789171;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306113;1705845892303159127;1705845894898775071;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845893290127042",
+                                    "$0;1705845893290127042;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306115;1705845892552355731;1705845893290115642;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845893286907942",
+                                    "$0;1705845893286907942;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306114;1705845892354407828;1705845893286903042;teastore-webui-99d685c8b-drhsx;0;0"
+                                ],
+                                [
+                                    "1705845893285805742",
+                                    "$0;1705845893285805742;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;1721078745097306117;1705845892951605237;1705845893285775542;teastore-webui-99d685c8b-drhsx;0;0"
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "first": {
+                    "first": "base",
+                    "second": [
+                        {
+                            "metric": {},
+                            "values": [
+                                [
+                                    1705845966.797,
+                                    "1.39616134076325"
+                                ],
+                                [
+                                    1705845969.797,
+                                    "1.3852637243449195"
+                                ],
+                                [
+                                    1705845972.797,
+                                    "1.3647342579633517"
+                                ],
+                                [
+                                    1705845975.797,
+                                    "1.3017034337049638"
+                                ],
+                                [
+                                    1705845978.797,
+                                    "1.262253064684243"
+                                ],
+                                [
+                                    1705845981.797,
+                                    "1.198975767161775"
+                                ],
+                                [
+                                    1705845984.797,
+                                    "1.219724730967418"
+                                ],
+                                [
+                                    1705845987.797,
+                                    "1.1645457311001557"
+                                ],
+                                [
+                                    1705845990.797,
+                                    "1.0962520349077491"
+                                ],
+                                [
+                                    1705845993.797,
+                                    "1.0554853557803754"
+                                ],
+                                [
+                                    1705845996.797,
+                                    "1.0149276760549348"
+                                ],
+                                [
+                                    1705845999.797,
+                                    "0.9503903162443429"
+                                ],
+                                [
+                                    1705846002.797,
+                                    "0.9267522601390407"
+                                ],
+                                [
+                                    1705846005.797,
+                                    "0.8492918216586729"
+                                ],
+                                [
+                                    1705846008.797,
+                                    "0.789584061268097"
+                                ],
+                                [
+                                    1705846011.797,
+                                    "0.7425345945491463"
+                                ],
+                                [
+                                    1705846014.797,
+                                    "0.7018066080856813"
+                                ],
+                                [
+                                    1705846017.797,
+                                    "0.6991296047418689"
+                                ],
+                                [
+                                    1705846020.797,
+                                    "0.6742998930285373"
+                                ],
+                                [
+                                    1705846023.797,
+                                    "0.6701772878788902"
+                                ],
+                                [
+                                    1705846026.797,
+                                    "0.6626157962799498"
+                                ]
+                            ]
+                        }
+                    ],
+                    "third": []
+                },
+                "second": {
+                    "first": "idle",
+                    "second": [
+                        {
+                            "metric": {},
+                            "values": [
+                                [
+                                    1705846045.029,
+                                    "0.7072816385224204"
+                                ],
+                                [
+                                    1705846048.029,
+                                    "0.7179288596858795"
+                                ],
+                                [
+                                    1705846051.029,
+                                    "0.7421635475255056"
+                                ],
+                                [
+                                    1705846054.029,
+                                    "0.7551548667562493"
+                                ],
+                                [
+                                    1705846057.029,
+                                    "1.296287847832945"
+                                ],
+                                [
+                                    1705846060.029,
+                                    "1.7404842521549722"
+                                ],
+                                [
+                                    1705846063.029,
+                                    "2.348507999470285"
+                                ],
+                                [
+                                    1705846066.029,
+                                    "2.5684271295142893"
+                                ],
+                                [
+                                    1705846069.029,
+                                    "2.8337902107589428"
+                                ],
+                                [
+                                    1705846072.029,
+                                    "2.6443867193224837"
+                                ],
+                                [
+                                    1705846075.029,
+                                    "2.7792621489551554"
+                                ],
+                                [
+                                    1705846078.029,
+                                    "2.6453631676107316"
+                                ],
+                                [
+                                    1705846081.029,
+                                    "2.7969601474106915"
+                                ],
+                                [
+                                    1705846084.029,
+                                    "2.9211795265863576"
+                                ],
+                                [
+                                    1705846087.029,
+                                    "3.0690460952937113"
+                                ],
+                                [
+                                    1705846090.029,
+                                    "3.913112614938008"
+                                ],
+                                [
+                                    1705846093.029,
+                                    "4.282323546561179"
+                                ],
+                                [
+                                    1705846096.029,
+                                    "4.580397984860029"
+                                ],
+                                [
+                                    1705846099.029,
+                                    "4.735165884573838"
+                                ],
+                                [
+                                    1705846102.029,
+                                    "4.296908062890837"
+                                ],
+                                [
+                                    1705846105.029,
+                                    "3.698012728557613"
+                                ]
+                            ]
+                        }
+                    ],
+                    "third": []
+                },
+                "third": {
+                    "first": "load",
+                    "second": [
+                        {
+                            "metric": {},
+                            "values": [
+                                [
+                                    1705846116.067,
+                                    "3.832553530079333"
+                                ],
+                                [
+                                    1705846119.067,
+                                    "3.925023055959545"
+                                ],
+                                [
+                                    1705846122.067,
+                                    "3.8241397620401543"
+                                ],
+                                [
+                                    1705846125.067,
+                                    "3.6288266128885933"
+                                ],
+                                [
+                                    1705846128.067,
+                                    "3.168848511078841"
+                                ],
+                                [
+                                    1705846131.067,
+                                    "2.985473974973811"
+                                ],
+                                [
+                                    1705846134.067,
+                                    "2.709780539675443"
+                                ],
+                                [
+                                    1705846137.067,
+                                    "2.919767283966378"
+                                ],
+                                [
+                                    1705846140.067,
+                                    "3.075215387733252"
+                                ],
+                                [
+                                    1705846143.067,
+                                    "3.0737791599165103"
+                                ],
+                                [
+                                    1705846146.067,
+                                    "3.070092862714569"
+                                ],
+                                [
+                                    1705846149.067,
+                                    "3.1516694460694348"
+                                ],
+                                [
+                                    1705846152.067,
+                                    "3.268833144250773"
+                                ],
+                                [
+                                    1705846155.067,
+                                    "3.1020476529319625"
+                                ],
+                                [
+                                    1705846158.067,
+                                    "2.934805407542065"
+                                ],
+                                [
+                                    1705846161.067,
+                                    "2.7973548211953623"
+                                ],
+                                [
+                                    1705846164.067,
+                                    "2.6876538058313484"
+                                ],
+                                [
+                                    1705846167.067,
+                                    "2.7786203262528297"
+                                ],
+                                [
+                                    1705846170.067,
+                                    "2.243444607696736"
+                                ],
+                                [
+                                    1705846173.067,
+                                    "2.171783589503928"
+                                ],
+                                [
+                                    1705846176.067,
+                                    "1.9597166483326105"
+                                ]
+                            ]
+                        }
+                    ],
+                    "third": [
+                        {
+                            "stream": {
+                                "filename": "/symlogs/sym-kieker-output.dat",
+                                "job": "rabbitmq-logs"
+                            },
+                            "values": [
+                                [
+                                    "1705846123926649394",
+                                    "$0;1705846123926649394;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932584;1705846123902248695;1705846123926637494;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846123898719195",
+                                    "$0;1705846123898719195;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932583;1705846123884032595;1705846123898702195;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846123880819195",
+                                    "$0;1705846123880819195;protected void tools.descartes.teastore.webui.servlet.CartServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932582;1705846123768835596;1705846123880799795;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846123765618196",
+                                    "$0;1705846123765618196;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932581;1705846123738314996;1705846123765599596;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846123732855596",
+                                    "$0;1705846123732855596;protected void tools.descartes.teastore.webui.servlet.CategoryServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932580;1705846123665407597;1705846123732839696;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846123661800397",
+                                    "$0;1705846123661800397;protected void tools.descartes.teastore.webui.servlet.CartServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932579;1705846122928822905;1705846123661774797;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846122926130805",
+                                    "$0;1705846122926130805;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932578;1705846122874224606;1705846122926122105;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846122871062806",
+                                    "$0;1705846122871062806;protected void tools.descartes.teastore.webui.servlet.ProductServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932577;1705846121963015116;1705846122871046306;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121958235916",
+                                    "$0;1705846121958235916;protected void tools.descartes.teastore.webui.servlet.CategoryServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932560;1705846121022939026;1705846121958220816;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121134002525",
+                                    "$0;1705846121134002525;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932575;1705846121080617725;1705846121133993125;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121133966325",
+                                    "$0;1705846121133966325;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932573;1705846121080617225;1705846121133948125;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121129995125",
+                                    "$0;1705846121129995125;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932576;1705846121080617925;1705846121129985125;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121129228225",
+                                    "$0;1705846121129228225;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932574;1705846121080617225;1705846121129215125;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121077841925",
+                                    "$0;1705846121077841925;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932570;1705846121050425626;1705846121077820825;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121075677825",
+                                    "$0;1705846121075677825;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932572;1705846121055614025;1705846121075664325;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121075577025",
+                                    "$0;1705846121075577025;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932571;1705846121055564625;1705846121075562325;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121068938725",
+                                    "$0;1705846121068938725;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932569;1705846121047557626;1705846121068923525;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121045494426",
+                                    "$0;1705846121045494426;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932568;1705846121041504926;1705846121041616526;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121040930126",
+                                    "$0;1705846121040930126;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932567;1705846121040763726;1705846121040917726;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121038610226",
+                                    "$0;1705846121038610226;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932565;1705846121038474126;1705846121038595426;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121038610126",
+                                    "$0;1705846121038610126;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932566;1705846121038482926;1705846121038595226;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121031762526",
+                                    "$0;1705846121031762526;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932564;1705846121031650026;1705846121031750626;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121031464326",
+                                    "$0;1705846121031464326;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932563;1705846121031310926;1705846121031447326;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121029552426",
+                                    "$0;1705846121029552426;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932562;1705846121029427726;1705846121029538326;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121029282426",
+                                    "$0;1705846121029282426;protected void tools.descartes.teastore.webui.servlet.CartActionServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932561;1705846121028885926;1705846121029263826;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121017395226",
+                                    "$0;1705846121017395226;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932555;1705846120949299927;1705846121017387126;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121017326326",
+                                    "$0;1705846121017326326;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932557;1705846120949396227;1705846121017316726;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121016918126",
+                                    "$0;1705846121016918126;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932559;1705846120949508627;1705846121016906526;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121016836426",
+                                    "$0;1705846121016836426;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932558;1705846120949423027;1705846121016820626;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846121015243826",
+                                    "$0;1705846121015243826;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932556;1705846120949357727;1705846121015227726;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846120934350227",
+                                    "$0;1705846120934350227;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932554;1705846120289267234;1705846120934343427;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846120934310827",
+                                    "$0;1705846120934310827;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932553;1705846120289006334;1705846120934302627;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846120934307927",
+                                    "$0;1705846120934307927;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932552;1705846120288974234;1705846120934296227;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846120934307927",
+                                    "$0;1705846120934307927;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932550;1705846120288974634;1705846120934297527;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846120934307827",
+                                    "$0;1705846120934307827;protected void tools.descartes.teastore.webui.servlet.LoginActionServlet.handlePOSTRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932551;1705846120288974234;1705846120934294227;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846120265425734",
+                                    "$0;1705846120265425734;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932548;1705846117725851273;1705846120265407534;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846118372322358",
+                                    "$0;1705846118372322358;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932546;1705846117327485282;1705846118372312858;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846118369352858",
+                                    "$0;1705846118369352858;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932545;1705846117307631982;1705846118369342858;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846118367661158",
+                                    "$0;1705846118367661158;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932549;1705846117925463568;1705846118367652058;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ],
+                                [
+                                    "1705846118366472758",
+                                    "$0;1705846118366472758;protected void tools.descartes.teastore.webui.servlet.IndexServlet.handleGETRequest(jakarta.servlet.http.HttpServletRequest, jakarta.servlet.http.HttpServletResponse);<no-session-id>;4137400682669932547;1705846117526599977;1705846118366463558;teastore-webui-99d685c8b-2tfqs;0;0"
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            }
+        ],
+        "second": 5
+    },
+    "metadata": {
+        "warmup": 0,
+        "queryAggregation": "max",
+        "repetitionAggregation": "median",
+        "operator": "gte",
+        "threshold": 1.0
+    }
+}

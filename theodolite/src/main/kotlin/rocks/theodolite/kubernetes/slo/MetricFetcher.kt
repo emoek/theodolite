@@ -86,7 +86,7 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         val offsetEnd = end.minus(offset)
 
         var counter = 0
-        logger.info { "Loki:"+query }
+        logger.info { "Loki:"+prometheusURL }
         while (counter < RETRIES) {
             logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)

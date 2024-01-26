@@ -36,4 +36,10 @@ class NoSearch(experimentRunner: ExperimentRunner) : SearchStrategy(experimentRu
         }
         return maxSuitableLoad
     }
+
+//    fun runExperiment(resources: List<Int>, loads: List<Int>): Int? {
+//        experimentRunner.runExperiment(loads,resources)
+//
+//        return 0
+//    }
 }

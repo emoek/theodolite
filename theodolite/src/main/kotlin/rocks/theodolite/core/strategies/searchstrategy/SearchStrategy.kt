@@ -43,7 +43,11 @@ abstract class SearchStrategy(val experimentRunner: ExperimentRunner) {
             Metric.EFFICIENCY ->
                 if(experimentRunner.run.get()) {
 //                    this.run(loads, resources)
+
                     experimentRunner.runExperiment(loads,resources)
+
+//                    this.runExperiment(loads,resources)
+
                 }
         }
     }
@@ -68,6 +72,10 @@ abstract class SearchStrategy(val experimentRunner: ExperimentRunner) {
      */
     abstract fun findSuitableLoad(resource: Int, loads: List<Int>) : Int?
 
+    fun runExperiment(resources: List<Int>, loads: List<Int>): Int? {
+        experimentRunner.runExperiment(loads,resources)
 
+        return 0
+    }
 
 }

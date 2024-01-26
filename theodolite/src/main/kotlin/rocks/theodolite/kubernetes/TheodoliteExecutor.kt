@@ -88,7 +88,23 @@ class TheodoliteExecutor(
 
 
         } else if (benchmarkExecution.execution.experimentType == NONISOLATED) {
-
+            logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
+            experimentRunner =
+                    NonIsolatedExperimentRunnerImpl(
+                            benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
+                            results = results,
+                            executionDuration = executionDuration,
+                            configurationOverrides = benchmarkExecution.configOverrides,
+                            slos = slos,
+                            repetitions = benchmarkExecution.execution.repetitions,
+                            executionId = benchmarkExecution.executionId,
+                            loadGenerationDelay = benchmarkExecution.execution.loadGenerationDelay,
+                            afterTeardownDelay = benchmarkExecution.execution.afterTeardownDelay,
+                            executionName = benchmarkExecution.name,
+                            loadPatcherDefinitions = loadDimensionPatcherDefinition,
+                            resourcePatcherDefinitions = resourcePatcherDefinition,
+                            waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
+                    )
         } else {
             logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
             experimentRunner =

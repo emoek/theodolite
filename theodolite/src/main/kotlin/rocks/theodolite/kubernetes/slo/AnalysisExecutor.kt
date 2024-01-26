@@ -405,7 +405,7 @@ class AnalysisExecutor(
 
             } else {
                 val total : Pair<List<PrometheusResponse>, List<PrometheusResponse>> = Pair(prometheusData,workloadData)
-                return sloChecker.evaluateEfficiency(total,meanResource)
+                return sloChecker.evaluateEfficiency(total,meanLoad)
 
             }
 

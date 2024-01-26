@@ -24,6 +24,7 @@ class ExecutionRunner(
             searchStrategy.applySearchStrategyByMetric(loads, resources, metric)
 
         } finally {
+            println("Results:"+searchStrategy.experimentRunner.results)
             ioHandler.writeToJSONFile(
                 searchStrategy.experimentRunner.results,
                 "${resultsFolder}exp${executionId}-result.json"

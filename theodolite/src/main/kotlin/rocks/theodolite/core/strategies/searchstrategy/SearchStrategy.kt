@@ -32,11 +32,18 @@ abstract class SearchStrategy(val experimentRunner: ExperimentRunner) {
                         this.findSuitableResource(load, resources)
                     }
                 }
+
             Metric.CAPACITY ->
                 for (resource in resources) {
                     if (experimentRunner.run.get()) {
                         this.findSuitableLoad(resource, loads)
                     }
+                }
+
+            Metric.EFFICIENCY ->
+                if(experimentRunner.run.get()) {
+//                    this.run(loads, resources)
+                    experimentRunner.runExperiment(loads,resources)
                 }
         }
     }
@@ -60,4 +67,30 @@ abstract class SearchStrategy(val experimentRunner: ExperimentRunner) {
      * @return suitable load for the specified resource amount, or null if no suitable load exists.
      */
     abstract fun findSuitableLoad(resource: Int, loads: List<Int>) : Int?
+
+
+    /**
+     * Find the biggest suitable load from the specified load list for the given resource amount.
+     *
+     * @param resource the resource to be tested.
+     * @param loads List of all possible loads.
+     *
+     * @return suitable load for the specified resource amount, or null if no suitable load exists.
+     */
+    fun run(loads: List<Int>, resources: List<Int>) : Int? {
+
+        val result = this.experimentRunner.runExperiment(loads, resources)
+
+
+
+//        var minimalSuitableResources: Int? = null
+//        for (res in resources) {
+////            logger.info { "Running experiment with load '$load' and resources '$res'" }
+//            val result = this.experimentRunner.runExperiment(load, res)
+//            if (result && minimalSuitableResources == null) {
+//                minimalSuitableResources = res
+//            }
+//        }
+        return 0
+    }
 }

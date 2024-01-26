@@ -2,7 +2,9 @@ package rocks.theodolite.core.strategies
 
 enum class Metric(val value: String) {
     DEMAND("demand"),
-    CAPACITY("capacity");
+    CAPACITY("capacity"),
+    EFFICIENCY("efficiency");
+
 
     companion object {
         fun from(metric: String): Metric =

@@ -29,6 +29,7 @@ class StrategyFactory {
             "FullSearch" -> FullSearch(executor)
             "LinearSearch" -> LinearSearch(executor)
             "BinarySearch" -> BinarySearch(executor)
+            "NoSearch" -> NoSearch(executor)
             "RestrictionSearch" -> when (searchStrategy){
                 "FullSearch" -> composeSearchRestrictionStrategy(executor, FullSearch(executor), results, restrictions)
                 "LinearSearch" -> composeSearchRestrictionStrategy(executor, LinearSearch(executor), results, restrictions)

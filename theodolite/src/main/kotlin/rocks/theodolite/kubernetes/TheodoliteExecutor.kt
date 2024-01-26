@@ -5,6 +5,7 @@ import mu.KotlinLogging
 import rocks.theodolite.core.*
 import rocks.theodolite.core.strategies.Metric
 import rocks.theodolite.core.strategies.StrategyFactory
+import rocks.theodolite.core.strategies.searchstrategy.SearchStrategy
 import rocks.theodolite.kubernetes.model.BenchmarkExecution
 import rocks.theodolite.kubernetes.model.KubernetesBenchmark
 import rocks.theodolite.kubernetes.patcher.PatcherDefinitionFactory
@@ -14,6 +15,8 @@ import java.time.Duration
 
 
 private val logger = KotlinLogging.logger {}
+private val NONISOLATED = "nonisolated"
+private val STAGED = "staged"
 
 /**
  * The Theodolite executor runs all the experiments defined with the given execution and benchmark configuration.
@@ -32,6 +35,8 @@ class TheodoliteExecutor(
      * and overrides which are given in the execution.
      */
     lateinit var experimentRunner: ExperimentRunner
+
+
 
     /**
      * Creates all required components to start Theodolite.
@@ -59,27 +64,11 @@ class TheodoliteExecutor(
             )
 
         val slos = SloFactory().createSlos(this.benchmarkExecution, this.benchmark)
-        if (!benchmarkExecution.execution.stages) {
-            logger.info { "The stage based ExperimentRunner Implementation is being used: ${benchmarkExecution.execution.stages} " }
-            experimentRunner =
-                    ExperimentRunnerImpl(
-                            benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
-                            results = results,
-                            executionDuration = executionDuration,
-                            configurationOverrides = benchmarkExecution.configOverrides,
-                            slos = slos,
-                            repetitions = benchmarkExecution.execution.repetitions,
-                            executionId = benchmarkExecution.executionId,
-                            loadGenerationDelay = benchmarkExecution.execution.loadGenerationDelay,
-                            afterTeardownDelay = benchmarkExecution.execution.afterTeardownDelay,
-                            executionName = benchmarkExecution.name,
-                            loadPatcherDefinitions = loadDimensionPatcherDefinition,
-                            resourcePatcherDefinitions = resourcePatcherDefinition,
-                            waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
-                    )
 
-        } else {
-            logger.info { "The stage based ExperimentRunner Implementation is being used: ${benchmarkExecution.execution.stages} " }
+
+        if (benchmarkExecution.execution.experimentType == STAGED) {
+
+            logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
             experimentRunner =
                     StageBasedExperimentRunnerImpl(
                             benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
@@ -97,23 +86,66 @@ class TheodoliteExecutor(
                             waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
                     )
 
+
+        } else if (benchmarkExecution.execution.experimentType == NONISOLATED) {
+
+        } else {
+            logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
+            experimentRunner =
+                    ExperimentRunnerImpl(
+                            benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
+                            results = results,
+                            executionDuration = executionDuration,
+                            configurationOverrides = benchmarkExecution.configOverrides,
+                            slos = slos,
+                            repetitions = benchmarkExecution.execution.repetitions,
+                            executionId = benchmarkExecution.executionId,
+                            loadGenerationDelay = benchmarkExecution.execution.loadGenerationDelay,
+                            afterTeardownDelay = benchmarkExecution.execution.afterTeardownDelay,
+                            executionName = benchmarkExecution.name,
+                            loadPatcherDefinitions = loadDimensionPatcherDefinition,
+                            resourcePatcherDefinitions = resourcePatcherDefinition,
+                            waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
+                    )
+
+
         }
 
-        if (benchmarkExecution.load.loadValues != benchmarkExecution.load.loadValues.sorted()) {
-            benchmarkExecution.load.loadValues = benchmarkExecution.load.loadValues.sorted()
-            logger.info {
-                "Load values are not sorted correctly, Theodolite sorts them in ascending order." +
-                        "New order is: ${benchmarkExecution.load.loadValues}"
+        if(benchmarkExecution.execution.experimentType != NONISOLATED) {
+            if (benchmarkExecution.load.loadValues != benchmarkExecution.load.loadValues.sorted()) {
+                benchmarkExecution.load.loadValues = benchmarkExecution.load.loadValues.sorted()
+                logger.info {
+                    "Load values are not sorted correctly, Theodolite sorts them in ascending order." +
+                            "New order is: ${benchmarkExecution.load.loadValues}"
+                }
+            }
+
+
+            if (benchmarkExecution.resources.resourceValues != benchmarkExecution.resources.resourceValues.sorted()) {
+                benchmarkExecution.resources.resourceValues = benchmarkExecution.resources.resourceValues.sorted()
+                logger.info {
+                    "Load values are not sorted correctly, Theodolite sorts them in ascending order." +
+                            "New order is: ${benchmarkExecution.resources.resourceValues}"
+                }
             }
         }
 
-        if (benchmarkExecution.resources.resourceValues != benchmarkExecution.resources.resourceValues.sorted()) {
-            benchmarkExecution.resources.resourceValues = benchmarkExecution.resources.resourceValues.sorted()
-            logger.info {
-                "Load values are not sorted correctly, Theodolite sorts them in ascending order." +
-                        "New order is: ${benchmarkExecution.resources.resourceValues}"
-            }
+        if (benchmarkExecution.execution.experimentType == NONISOLATED) {
+            return Config(
+                    loads = benchmarkExecution.load.loadValues,
+                    resources = benchmarkExecution.resources.resourceValues,
+                    searchStrategy = strategyFactory.createSearchStrategy(
+                            experimentRunner,
+                            "NoSearch",
+                            "",
+                            emptyList<String>(),
+                            "",
+                            results
+                    ),
+                    metric = Metric.from("efficiency")
+            )
         }
+
 
         return Config(
             loads = benchmarkExecution.load.loadValues,

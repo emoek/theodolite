@@ -52,6 +52,9 @@ class Results(val metric: Metric) {
                 } else if (!optimalYValues.containsKey(experiment.second)) {
                     optimalYValues[experiment.second] = Int.MIN_VALUE
                 }
+
+            Metric.EFFICIENCY ->
+                println("ADD")
         }
     }
 

@@ -95,6 +95,8 @@ class StageBasedExperimentRunnerImpl(
 
 
             if (efficiencySlos.isNotEmpty()) {
+                logger.info { "Wait ${this.loadGenerationDelay} seconds for the logs before starting the Analysis Executor." }
+                Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
                 val efficiencyResults = efficiencySlos.map {
                     StageBasedAnalysisExecutor(slo = it, executionId = executionId)
                             .analyzeEfficiency(

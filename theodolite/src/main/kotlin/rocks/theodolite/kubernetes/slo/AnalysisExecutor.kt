@@ -9,7 +9,6 @@ import java.util.*
 import java.util.regex.Pattern
 
 private val DEFAULT_STEP_SIZE = Duration.ofSeconds(5)
-private val DEFAULT_STAGE = listOf("load")
 private val DEFAULT_WORKLOAD = "workload"
 private val DEFAULT_WORKLOADURL = "prometheus"
 
@@ -37,7 +36,96 @@ class AnalysisExecutor(
 
 
 
+    /**
+     *  Analyses an experiment via prometheus data.
+     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  @param load of the experiment.
+     *  @param resource of the experiment.
+     *  @param executionIntervals list of start and end points of experiments
+     *  @return true if the experiment succeeded.
+     */
+    fun collect(load: Int, resource: Int, executionIntervals: List<Pair<Instant, Instant>>) {
+        var repetitionCounter = 1
 
+        try {
+//            val ioHandler = IOHandler()
+            val resultsFolder = ioHandler.getResultFolderURL()
+            val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
+
+
+
+
+
+            val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
+
+
+
+
+
+
+            if (slo.prometheusUrl.contains("loki")) {
+                executionIntervals.forEach { intervalList ->
+
+
+
+
+
+                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
+                            val lokiData = fetcher.fetchLogs(
+                                    start = intervalList.first,
+                                    end = intervalList.second,
+                                    stepSize = stepSize,
+                                    query = SloConfigHandler.getQueryString(slo = slo)
+                            )
+
+                            ioHandler.writeToCSVFile(
+                                    fileURL = "${fileURL}_${slo.name}_${repetitionCounter}",
+                                    data = lokiData.getResultAsList(),
+                                    columns = listOf("labels", "timestamp", "value")
+                            )
+
+
+
+
+                    repetitionCounter++
+                }
+
+            } else {
+
+                executionIntervals.forEach { intervalList ->
+
+
+
+
+
+                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
+                            val prometheusData = fetcher.fetchMetric(
+                                    start = intervalList.first,
+                                    end = intervalList.second,
+                                    stepSize = stepSize,
+                                    query = SloConfigHandler.getQueryString(slo = slo)
+                            )
+
+                            ioHandler.writeToCSVFile(
+                                    fileURL = "${fileURL}_${slo.name}_${repetitionCounter}",
+                                    data = prometheusData.getAllResultAsList(),
+                                    columns = listOf("labels", "timestamp", "value")
+                            )
+
+
+
+
+                    repetitionCounter++
+                }
+            }
+
+
+
+
+        } catch (e: Exception) {
+            throw EvaluationFailedException("Collection failed for resource '$resource' and load '$load ", e)
+        }
+    }
 
 
 
@@ -216,6 +304,115 @@ class AnalysisExecutor(
 
 
 
+
+
+
+    /**
+     *  Analyses an experiment via prometheus data.
+     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  @param load of the experiment.
+     *  @param resource of the experiment.
+     *  @param executionIntervals list of start and end points of experiments
+     *  @return true if the experiment succeeded.
+     */
+    fun analyzeEfficiency(loads: List<Int>, resources: List<Int>, executionIntervals: List<Pair<Instant, Instant>>): Boolean {
+        var repetitionCounter = 1
+
+        try {
+            val ioHandler = IOHandler()
+            val resultsFolder = ioHandler.getResultFolderURL()
+            val fileURL = "${resultsFolder}exp${executionId}_${slo.sloType.toSlug()}"
+
+            val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
+            val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
+            val workloadUrl = slo.properties["workloadUrl"]?.lowercase() ?: DEFAULT_WORKLOADURL
+
+
+
+            val prometheusData = executionIntervals
+                    .map { interval ->
+                        fetcher.fetchMetric(
+                                start = interval.first,
+                                end = interval.second,
+                                stepSize = stepSize,
+                                query = SloConfigHandler.getQueryString(slo = slo)
+                        )
+                    }
+
+//            prometheusData.forEach{ data ->
+//                ioHandler.writeToCSVFile(
+//                        fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
+//                        data = data.getResultAsList(),
+//                        columns = listOf("labels", "timestamp", "value")
+//                )
+//            }
+
+            var lokiData = listOf<LokiResponse>()
+            var workloadData = listOf<PrometheusResponse>()
+            if (workload != DEFAULT_WORKLOAD) {
+                if (workloadUrl != DEFAULT_WORKLOADURL) {
+
+                    lokiData = executionIntervals
+                            .map { interval ->
+                                fetcher.fetchLogs(
+                                        start = interval.first,
+                                        end = interval.second,
+                                        stepSize = stepSize,
+                                        query = workload
+                                )
+                            }
+
+//                    lokiData.forEach{ data ->
+//                        ioHandler.writeToCSVFile(
+//                                fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
+//                                data = data.getResultAsList(),
+//                                columns = listOf("labels", "timestamp", "value")
+//                        )
+//                    }
+
+
+
+
+                } else {
+
+                    workloadData = executionIntervals
+                            .map { interval ->
+                                fetcher.fetchMetric(
+                                        start = interval.first,
+                                        end = interval.second,
+                                        stepSize = stepSize,
+                                        query = workload
+                                )
+                            }
+
+
+
+                }
+            }
+
+            val sloChecker = SloCheckerFactory().create(
+                    sloType = slo.sloType,
+                    properties = slo.properties,
+                    load = 0,
+                    resources = 0
+            )
+
+            val meanLoad = loads.average().toInt()
+            val meanResource = resources.average().toInt()
+            if (workloadUrl != DEFAULT_WORKLOADURL) {
+                val total : Pair<List<PrometheusResponse>, List<LokiResponse>> = Pair(prometheusData,lokiData)
+                return sloChecker.evaluateLogEfficiency(total,meanLoad)
+
+            } else {
+                val total : Pair<List<PrometheusResponse>, List<PrometheusResponse>> = Pair(prometheusData,workloadData)
+                return sloChecker.evaluateEfficiency(total,meanResource)
+
+            }
+
+        } catch (e: Exception) {
+            throw EvaluationFailedException("Evaluation failed for resources and loads ", e)
+        }
+    }
 
 
 

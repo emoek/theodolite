@@ -11,7 +11,6 @@ import java.util.regex.Pattern
 private val DEFAULT_STEP_SIZE = Duration.ofSeconds(5)
 private val DEFAULT_STAGE = listOf("load")
 private val DEFAULT_WORKLOAD = "workload"
-//private val DEFAULT_TYPE = 1
 private val DEFAULT_WORKLOADURL = "prometheus"
 
 class StageBasedAnalysisExecutor(
@@ -50,8 +49,7 @@ class StageBasedAnalysisExecutor(
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
 
             val stages = slo.properties["stages"]?.lowercase()?.split("+") ?: DEFAULT_STAGE
-            val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
-            val workloadUrl = slo.properties["workloadUrl"]?.lowercase() ?: DEFAULT_WORKLOADURL
+
 
 
 
@@ -140,16 +138,14 @@ class StageBasedAnalysisExecutor(
         try {
 //            val ioHandler = IOHandler()
             val resultsFolder = ioHandler.getResultFolderURL()
-            val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
+//            val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
 
 
 
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
-            //lowercase weg?
+
             val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
 
-//            val type = slo.properties["type"]?.lowercase()?.toInt() ?: DEFAULT_TYPE
-//            val staged = slo.properties["staged"]?.toBoolean() ?: false
 
             val workloadUrl = slo.properties["workloadUrl"]?.lowercase() ?: DEFAULT_WORKLOADURL
 
@@ -159,20 +155,6 @@ class StageBasedAnalysisExecutor(
 //            val total: MutableList<Triple<Pair<String,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>
             val total: MutableList<Triple<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
             val totalWithLogs: MutableList<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>> = mutableListOf()
-
-//            // TYPE1: load / l       List -> Pair
-//            val totalDataList: MutableList<Pair<String,PrometheusResponse>> = mutableListOf()
-//            // TYPE2: WQ / l         List -> Pair
-//            val totalDataListWithQuery: MutableList<Triple<String,PrometheusResponse,PrometheusResponse>> = mutableListOf()
-//            // TYPE3: WQl-WQi / l    List -> Pair -> Pair(idle)+Triple
-//            val totalDataListWithStagedQuery: MutableList<Pair<Pair<String,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
-//            // TYPE4: load / l-b     List -> Pair -> Pair+Pair
-//            val stagedTotalDataList: MutableList<Pair<Pair<String,PrometheusResponse>,Pair<String,PrometheusResponse>>> = mutableListOf()
-//            // TYPE5: WQ / l-b       List -> Pair -> Pair(base)+Triple
-//            val stagedTotalDataListWithQuery: MutableList<Pair<Pair<String,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
-//            // TYPE6: WQl-WQi / l-b  List -> Pair -> Triple+Triple
-////            val stagedTotalDataListWithStagedQuery: MutableList<Pair<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
-//            val stagedTotalDataListWithStagedQuery: MutableList<Triple<Pair<String,PrometheusResponse>,Pair<String,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
 
             executionIntervals.forEach { intervalList ->
                 val loadTime: Triple<String,Instant,Instant> = intervalList[2]
@@ -217,6 +199,8 @@ class StageBasedAnalysisExecutor(
 
                 if (workload != DEFAULT_WORKLOAD) {
 
+//                    rocks.theodolite.kubernetes.logger.info { "Wait ${this.loadGenerationDelay} seconds for the logs before starting the Analysis Executor." }
+//                    Thread.sleep(Duration.ofSeconds(10).toMillis())
                     if (workloadUrl != DEFAULT_WORKLOADURL) {
                         val fetcher = MetricFetcher(
                                 prometheusURL = workloadUrl,
@@ -291,194 +275,6 @@ class StageBasedAnalysisExecutor(
             }
 
 
-//            if (type == 2 && workload != DEFAULT_WORKLOAD) {
-//                executionIntervals.forEach { intervalList ->
-//                    val loadTime: Triple<String,Instant,Instant> = intervalList[2]
-//
-//                    val prometheusData = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//                    val workloadData = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = workload
-//                    )
-////                    ioHandler.writeToCSVFile(
-////                            fileURL = "${fileURL}_${slo.name}_${loadTime.first}_${repetitionCounter}",
-////                            data = prometheusData.getResultAsList(),
-////                            columns = listOf("labels", "timestamp", "value")
-////                    )
-//
-//                    totalDataListWithQuery.add(Triple(loadTime.first,prometheusData,workloadData))
-//                    repetitionCounter++
-//                }
-//
-//
-//            }  else if (type == 3 && workload != DEFAULT_WORKLOAD) {
-//                executionIntervals.forEach { intervalList ->
-//                    val loadTime: Triple<String,Instant,Instant> = intervalList[2]
-//                    val idleTime: Triple<String,Instant,Instant> = intervalList[1]
-//
-//                    val prometheusData = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//                    val workloadDataIdle = fetcher.fetchMetric(
-//                            start = idleTime.second,
-//                            end = idleTime.third,
-//                            stepSize = stepSize,
-//                            query = workload
-//                    )
-//
-//                    val workloadDataLoad = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = workload
-//                    )
-////                    ioHandler.writeToCSVFile(
-////                            fileURL = "${fileURL}_${slo.name}_${loadTime.first}_${repetitionCounter}",
-////                            data = prometheusData.getResultAsList(),
-////                            columns = listOf("labels", "timestamp", "value")
-////                    )
-//
-//                    totalDataListWithStagedQuery.add(Pair(Pair(loadTime.first,workloadDataIdle), Triple(idleTime.first,prometheusData,workloadDataLoad)))
-//                    repetitionCounter++
-//                }
-//            } else if (type == 4) {
-//                executionIntervals.forEach { intervalList ->
-//                    val loadTime: Triple<String,Instant,Instant> = intervalList[2]
-//                    val baseTime: Triple<String,Instant,Instant> = intervalList[0]
-//
-//                    val prometheusDataLoad = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//
-//                    val prometheusDataBase = fetcher.fetchMetric(
-//                            start = baseTime.second,
-//                            end = baseTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//
-////                    ioHandler.writeToCSVFile(
-////                            fileURL = "${fileURL}_${slo.name}_${loadTime.first}_${repetitionCounter}",
-////                            data = prometheusData.getResultAsList(),
-////                            columns = listOf("labels", "timestamp", "value")
-////                    )
-//                    stagedTotalDataList.add(Pair(Pair(baseTime.first,prometheusDataBase), Pair(loadTime.first,prometheusDataLoad)))
-//                    repetitionCounter++
-//                }
-//
-//            } else if (type == 5 && workload != DEFAULT_WORKLOAD) {
-//
-//                executionIntervals.forEach { intervalList ->
-//                    val loadTime: Triple<String,Instant,Instant> = intervalList[2]
-//                    val baseTime: Triple<String,Instant,Instant> = intervalList[0]
-//
-//                    val prometheusDataLoad = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//
-//                    val prometheusDataBase = fetcher.fetchMetric(
-//                            start = baseTime.second,
-//                            end = baseTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//
-//                    val workloadDataLoad = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = workload
-//                    )
-//
-////                    ioHandler.writeToCSVFile(
-////                            fileURL = "${fileURL}_${slo.name}_${loadTime.first}_${repetitionCounter}",
-////                            data = prometheusData.getResultAsList(),
-////                            columns = listOf("labels", "timestamp", "value")
-////                    )
-//                    stagedTotalDataListWithQuery.add(Pair(Pair(baseTime.first,prometheusDataBase),Triple(loadTime.first,prometheusDataLoad,workloadDataLoad)))
-//                    repetitionCounter++
-//                }
-//            } else if (type == 6 && workload != DEFAULT_WORKLOAD) {
-//
-//                executionIntervals.forEach { intervalList ->
-//                    val loadTime: Triple<String,Instant,Instant> = intervalList[2]
-//                    val idleTime: Triple<String,Instant,Instant> = intervalList[1]
-//                    val baseTime: Triple<String,Instant,Instant> = intervalList[0]
-//
-//                    val prometheusDataLoad = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//
-//                    val prometheusDataBase = fetcher.fetchMetric(
-//                            start = baseTime.second,
-//                            end = baseTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-//
-//                    val workloadDataIdle = fetcher.fetchMetric(
-//                            start = idleTime.second,
-//                            end = idleTime.third,
-//                            stepSize = stepSize,
-//                            query = workload
-//                    )
-//
-//                    val workloadDataLoad = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = workload
-//                    )
-//
-//
-////                    ioHandler.writeToCSVFile(
-////                            fileURL = "${fileURL}_${slo.name}_${loadTime.first}_${repetitionCounter}",
-////                            data = prometheusData.getResultAsList(),
-////                            columns = listOf("labels", "timestamp", "value")
-////                    )
-//                    stagedTotalDataListWithStagedQuery.add(Triple(Pair(baseTime.first,prometheusDataBase),Pair(idleTime.first,workloadDataIdle), Triple(loadTime.first,prometheusDataLoad,workloadDataLoad)))
-//                    repetitionCounter++
-//                }
-//            } else {
-//                executionIntervals.forEach { intervalList ->
-//                    val loadTime: Triple<String,Instant,Instant> = intervalList[2]
-//                    val prometheusData = fetcher.fetchMetric(
-//                            start = loadTime.second,
-//                            end = loadTime.third,
-//                            stepSize = stepSize,
-//                            query = SloConfigHandler.getQueryString(slo = slo)
-//                    )
-////                    ioHandler.writeToCSVFile(
-////                            fileURL = "${fileURL}_${slo.name}_${loadTime.first}_${repetitionCounter}",
-////                            data = prometheusData.getResultAsList(),
-////                            columns = listOf("labels", "timestamp", "value")
-////                    )
-//
-//                    totalDataList.add(Pair(loadTime.first,prometheusData))
-//                    repetitionCounter++
-//                }
-//
-//            }
-
             val sloChecker = SloCheckerFactory().create(
             sloType = slo.sloType,
             properties = slo.properties,
@@ -491,80 +287,6 @@ class StageBasedAnalysisExecutor(
             } else {
                 return sloChecker.evaluateStageBased(total, load)
             }
-
-//            executionIntervals.forEach { intervalList ->
-//                val dataListWithQuery: MutableList<Triple<String,PrometheusResponse,PrometheusResponse>> = mutableListOf()
-//
-//                val dataList: MutableList<Pair<String,PrometheusResponse>> = mutableListOf()
-//
-//                intervalList.forEach { (stage, start, end) ->
-//
-//
-//                    if (stage in listOf("base","load")) {
-//                        val prometheusData = fetcher.fetchMetric(
-//                                start = start,
-//                                end = end,
-//                                stepSize = stepSize,
-//                                query = SloConfigHandler.getQueryString(slo = slo)
-//                        )
-//
-//
-//                        ioHandler.writeToCSVFile(
-//                                fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
-//                                data = prometheusData.getResultAsList(),
-//                                columns = listOf("labels", "timestamp", "value")
-//                        )
-//
-//                        if (workload != DEFAULT_WORKLOAD) {
-//                            val workloadData = fetcher.fetchMetric(
-//                                    start = start,
-//                                    end = end,
-//                                    stepSize = stepSize,
-//                                    query = workload
-//                            )
-//
-//
-//                            ioHandler.writeToCSVFile(
-//                                    fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
-//                                    data = workloadData.getResultAsList(),
-//                                    columns = listOf("labels", "timestamp", "value")
-//                            )
-//
-//
-//                            dataListWithQuery.add(Triple(stage,prometheusData,prometheusData))
-//                        } else {
-//                            dataList.add(Pair(stage,prometheusData))
-//
-//                        }
-//
-//                    }
-//
-//
-//                }
-//                if (workload != DEFAULT_WORKLOAD) {
-//                    stagedTotalDataListWithStagedQuery.add(Pair(dataListWithQuery[0], dataListWithQuery[1]))
-//                } else {
-//                    stagedTotalDataList.add(Pair(dataList[0],dataList[1]))
-//                }
-//
-//                repetitionCounter++
-//            }
-//
-//            val sloChecker = SloCheckerFactory().create(
-//                    sloType = slo.sloType,
-//                    properties = slo.properties,
-//                    load = load,
-//                    resources = resource
-//            )
-//
-//            if (workload != DEFAULT_WORKLOAD) {
-//
-//                return sloChecker.evaluateEfficiencyQuery(stagedTotalDataListWithStagedQuery)
-//            } else {
-//                return sloChecker.evaluateEfficiency(stagedTotalDataList, load)
-//
-//            }
-
 
 
 

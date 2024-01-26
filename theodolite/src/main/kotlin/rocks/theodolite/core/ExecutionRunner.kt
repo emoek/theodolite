@@ -43,6 +43,15 @@ class ExecutionRunner(
                         calculateMetric(resources, searchStrategy.experimentRunner.results),
                         listOf("resource", "loads")
                     )
+
+                Metric.EFFICIENCY ->
+                    println("Results:"+searchStrategy.experimentRunner.results)
+
+//                    ioHandler.writeToCSVFile(
+//                            "${resultsFolder}exp${executionId}_efficiency",
+//                            calculateMetric(resources, searchStrategy.experimentRunner.results),
+//                            listOf("", "loads")
+//                    )
             }
         }
     }

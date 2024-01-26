@@ -56,6 +56,7 @@ class ExperimentRunnerImpl(
 
         val (collectSlos, analysisSlos) = slos.partition { it.sloType.lowercase() == "collect" }
         val (efficiencySlos, scalabilitySlos) = analysisSlos.partition { it.sloType.lowercase() == "efficiency" }
+        val experimentResults: MutableList<Boolean> = mutableListOf()
 
 
 //        if (nonScalabilitySlos.isNotEmpty()) {
@@ -65,14 +66,34 @@ class ExperimentRunnerImpl(
          * Analyse the experiment, if [run] is true, otherwise the experiment was canceled by the user.
          */
         if (this.run.get()) {
-            val experimentResults = scalabilitySlos.map {
-                AnalysisExecutor(slo = it, executionId = executionId)
-                        .analyze(
-                                load = load,
-                                resource = resource,
-                                executionIntervals = executionIntervals
-                        )
+
+            if (scalabilitySlos.isNotEmpty()) {
+
+                val scalabilityResults = scalabilitySlos.map {
+                    AnalysisExecutor(slo = it, executionId = executionId)
+                            .analyze(
+                                    load = load,
+                                    resource = resource,
+                                    executionIntervals = executionIntervals
+                            )
+                }
+
+                experimentResults.addAll(scalabilityResults)
             }
+            if (efficiencySlos.isNotEmpty()) {
+
+                val efficiencyResults = efficiencySlos.map {
+                    AnalysisExecutor(slo = it, executionId = executionId)
+                            .analyzeEfficiency(
+                                    load = load,
+                                    resource = resource,
+                                    executionIntervals = executionIntervals
+                            )
+                }
+                experimentResults.addAll(efficiencyResults)
+
+            }
+
 
             result = (false !in experimentResults)
             this.results.addExperimentResult(Pair(load, resource), result)

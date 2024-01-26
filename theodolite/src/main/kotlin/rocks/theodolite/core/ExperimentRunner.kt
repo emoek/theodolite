@@ -26,4 +26,23 @@ abstract class ExperimentRunner(val results: Results) {
      */
     abstract fun runExperiment(load: Int, resource: Int): Boolean
 
+
+
+    /**
+     * Run an experiment for the given parametrization, evaluate the
+     * experiment and save the result.
+     *
+     * @param load to be tested.
+     * @param resource to be tested.
+     * @return True, if the number of resources are suitable for the
+     *     given load, false otherwise (demand metric), or
+     *     True, if there is a load suitable for the
+     *     given resource, false otherwise.
+     */
+    open fun runExperiment(loads: List<Int>, resources: List<Int>): Boolean {
+        println("Override in NonIsolatedExperimentRunnerImpl")
+        return true
+
+    }
+
 }

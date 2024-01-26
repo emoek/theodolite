@@ -356,9 +356,14 @@ class AnalysisExecutor(
             if (workload != DEFAULT_WORKLOAD) {
                 if (workloadUrl != DEFAULT_WORKLOADURL) {
 
+                    val logFetcher = MetricFetcher(
+                            prometheusURL = workloadUrl,
+                            offset = Duration.ofHours(slo.offset.toLong())
+                    )
+
                     lokiData = executionIntervals
                             .map { interval ->
-                                fetcher.fetchLogs(
+                                logFetcher.fetchLogs(
                                         start = interval.first,
                                         end = interval.second,
                                         stepSize = stepSize,

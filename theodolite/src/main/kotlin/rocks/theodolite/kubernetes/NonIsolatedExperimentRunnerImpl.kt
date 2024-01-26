@@ -64,6 +64,16 @@ class NonIsolatedExperimentRunnerImpl(
 
         if(this.run.get()) {
 
+            collectSlos.map {
+                AnalysisExecutor(slo = it, executionId = executionId)
+                        .collect(
+                                load = 0,
+                                resource = 0,
+                                executionIntervals = executionIntervals
+                        )
+
+            }
+
             if (scalabilitySlos.isNotEmpty()) {
 
                 val scalabilityResults = scalabilitySlos.map {

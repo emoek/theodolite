@@ -86,7 +86,7 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         val offsetEnd = end.minus(offset)
 
         var counter = 0
-
+        logger.info { "Loki:"+query }
         while (counter < RETRIES) {
             logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
@@ -103,7 +103,7 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
                     .send(request, HttpResponse.BodyHandlers.ofString())
             if (response.statusCode() != 200) {
                 val message = response.body()
-                logger.warn { "Could not connect to Prometheus: $message. Retry $counter/$RETRIES." }
+                logger.warn { "Could not connect to Loki: $message. Retry $counter/$RETRIES." }
                 counter++
             } else {
 //                val values = parseValues(response.body())

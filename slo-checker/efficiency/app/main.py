@@ -76,32 +76,6 @@ def check_result(result, operator: str, threshold):
 
 
 
-def handle_query(data):
-    print("call if workloadQuery provided, thus ")
-
-
-def handle_efficiency(data):
-    load = data[1]
-    results = data[0]
-
-    for r in results:
-        # potentially base 
-        first_pair = r['first'] 
-        first_string = str(first_pair['first'])
-        first_first_listOfProms = first_pair['second']
-        first_second_listOfProms = first_pair['third']
-
-
-        second_pair = r['second'] 
-        second_string = str(second_pair['first'])
-        second_first_listOfProms = second_pair['second']
-        second_second_listOfProms = second_pair['third']
-
-
-        # if(len(first_first_listOfProms) < 1):
-        #     query_results = [aggr_query(r[0]["values"], warmup, query_aggregation) for r in data["results"]]
-
-
         
 
 
@@ -449,19 +423,36 @@ async def check_slo(request: Request):
     loadCons = []
     loadLogs = []
 
-    
-    for entry in data["results"]["first"]:
+    print(data["results"]["first"]["first"])
+    print(isinstance(data['results']['first'], dict))
+    print(len(data["results"]["first"]))
+
+    if len(data["results"]["first"]) > 2:
+
+        for entry in data["results"]["first"]:
 
 
-        
+            
 
-        loadCons.append(entry["third"]["second"][0]["values"])
+            loadCons.append(entry["third"]["second"][0]["values"])
 
 
 
-        # Extract log values if present
-        if entry["third"]["third"]:
-            loadLogs.append(entry["third"]["third"][0]["values"])
+            # Extract log values if present
+            if entry["third"]["third"]:
+                loadLogs.append(entry["third"]["third"][0]["values"])
+    else:
+        for entry in data["results"]["first"]["first"]:
+
+            loadCons.append(entry[0]["values"])
+
+            
+
+        for entry in data["results"]["first"]["second"]:
+
+
+            loadLogs.append(entry[0]["values"])
+         
 
 
 
@@ -667,21 +658,33 @@ async def check_slo(request: Request):
     loadCons = []
     loadLogs = []
 
-    
-    for entry in data["results"]["first"]:
+    if len(data["results"]["first"]) > 2:
+
+        for entry in data["results"]["first"]:
 
 
+            
+
+            loadCons.append(entry["third"]["second"][0]["values"])
+
+
+
+
+            # Extract log values if present
+            if entry["third"]["third"]:
+                loadLogs.append(entry["third"]["third"][0]["values"])
+    else:
+        for entry in data["results"]["first"]["first"]:
+
+            loadCons.append(entry[0]["values"])
+
+            
+
+        for entry in data["results"]["first"]["second"]:
+
+
+            loadLogs.append(entry[0]["values"])
         
-
-        loadCons.append(entry["third"]["second"][0]["values"])
-
-
-
-
-        # Extract log values if present
-        if entry["third"]["third"]:
-            loadLogs.append(entry["third"]["third"][0]["values"])
-
 
 
     resultWMQ = calcWorkloadMetric(loadLogs, metadata)
@@ -772,13 +775,25 @@ async def check_slo(request: Request):
     loadCons = []
 
 
-    
-    for entry in data["results"]["first"]:
+    if len(data["results"]["first"]) > 2:
+
+        for entry in data["results"]["first"]:
 
 
-        
+            
 
-        loadCons.append(entry["third"]["second"][0]["values"])
+            loadCons.append(entry["third"]["second"][0]["values"])
+    else:
+        for entry in data["results"]["first"]["first"]:
+
+            loadCons.append(entry[0]["values"])
+
+            
+
+
+
+
+         
 
 
 

@@ -231,7 +231,7 @@ operator:
   enabled: true
   
   image: emreoe/theomod
-  imageTag: 1.7
+  imageTag: 1.8
   imagePullPolicy: Always
 
   nodeSelector: {}
@@ -262,7 +262,7 @@ operator:
     efficiency:
       enabled: true
       image: emreoe/theodolite-slo-checker-efficiency
-      imageTag: 1.2
+      imageTag: 1.3
       imagePullPolicy: Always
       resources:
         requests:

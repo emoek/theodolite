@@ -45,6 +45,8 @@ class NonIsolatedExperimentRunnerImpl(
 
 
         for (i in 1.rangeTo(repetitions)) {
+            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting repetition ${i}." }
+            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             if (this.run.get()) {
                 logger.info { "Run repetition $i/$repetitions" }
                 executionIntervals.add(

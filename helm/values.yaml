@@ -347,6 +347,68 @@ operator:
       uc4BeamFlink: true
       uc4BeamSamza: true
 
+
+
+
+loki-stack:
+  enabled: true
+  promtail:
+    enabled: false
+  grafana:
+    enabled: false
+  mode: standalone
+  nodeSelector: {}
+  schema_config:
+    configs: 
+      limits_config:
+        retention_period: 72h
+        enforce_metric_name: false
+        reject_old_samples: true
+        reject_old_samples_max_age: 168h
+        max_cache_freshness_per_query: 10m
+        split_queries_by_interval: 15m
+        per_stream_rate_limit: 512M
+        per_stream_rate_limit_burst: 1024M
+        cardinality_limit: 200000
+      ingestion_rate_mb: 10000
+      ingestion_burst_size_mb: 1000
+      max_entries_limit_per_query: 1000000
+      max_label_value_length: 20480
+      max_label_name_length: 10240
+      max_label_names_per_series: 300
+
+
+kepler:
+  enabled: false
+  image:
+    repository: "quay.io/sustainable_computing_io/kepler"
+    pullPolicy: Always
+  securityContext:
+    privileged: true
+  nodeSelector:
+    kubernetes.io/os: linux
+  tolerations:
+    - effect: NoSchedule
+      key: node-role.kubernetes.io/control-plane
+  extraEnvVars:
+    KEPLER_LOG_LEVEL: "1"
+    ENABLE_GPU: "true"
+    ENABLE_EBPF_CGROUPID: "true"
+    EXPOSE_IRQ_COUNTER_METRICS: "true"
+    EXPOSE_KUBELET_METRICS: "true"
+    ENABLE_PROCESS_METRICS: "true"
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    scrapeTimeout: 5s
+    labels: {}
+
+
 serviceAccount:
   create: true
 

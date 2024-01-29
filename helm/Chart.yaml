@@ -25,6 +25,14 @@ dependencies:
     version: 0.36.*
     repository: https://strimzi.io/charts/
     condition: strimzi.enabled
+  - name: kepler
+    version: 0.5.*
+    repository: https://sustainable-computing-io.github.io/kepler-helm-chart
+    condition: kepler.enabled
+  - name: loki-stack
+    version: 2.10.*
+    repository: "https://grafana.github.io/helm-charts"
+    condition: loki-stack.enabled
 
 
 version: 0.10.0-SNAPSHOT

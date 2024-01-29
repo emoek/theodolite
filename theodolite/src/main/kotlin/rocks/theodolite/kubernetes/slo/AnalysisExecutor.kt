@@ -78,6 +78,10 @@ class AnalysisExecutor(
                                     query = SloConfigHandler.getQueryString(slo = slo)
                             )
 
+                            if (lokiData.data?.result.isNullOrEmpty()) {
+                                throw NoSuchFieldException("The prometheus query did not provide any result for the query.")
+
+                            }
                             ioHandler.writeToCSVFile(
                                     fileURL = "${fileURL}_${slo.name}_${repetitionCounter}",
                                     data = lokiData.getResultAsList(),
@@ -106,6 +110,10 @@ class AnalysisExecutor(
                                     query = SloConfigHandler.getQueryString(slo = slo)
                             )
 
+                            if (prometheusData.data?.result.isNullOrEmpty()) {
+                                throw NoSuchFieldException("The prometheus query did not provide any result for the query.")
+
+                            }
                             ioHandler.writeToCSVFile(
                                     fileURL = "${fileURL}_${slo.name}_${repetitionCounter}",
                                     data = prometheusData.getAllResultAsList(),
@@ -164,7 +172,10 @@ class AnalysisExecutor(
                                 query = SloConfigHandler.getQueryString(slo = slo)
                         )
                     }
+            if (prometheusData.isEmpty()) {
+                throw NoSuchFieldException("The prometheus query did not provide any result for the query.")
 
+            }
             prometheusData.forEach{ data ->
                 ioHandler.writeToCSVFile(
                         fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",

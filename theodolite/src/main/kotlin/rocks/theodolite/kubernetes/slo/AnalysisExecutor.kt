@@ -392,6 +392,10 @@ class AnalysisExecutor(
 
 
 
+                    if(lokiData.isNotEmpty()) {
+                        println(workloadData.size)
+
+                    }
 
                 } else {
 
@@ -409,6 +413,7 @@ class AnalysisExecutor(
 
                 }
             }
+
 
             val sloChecker = SloCheckerFactory().create(
                     sloType = slo.sloType,

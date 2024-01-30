@@ -62,8 +62,10 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
             } else {
 //                val values = parseValues(response.body())
 //                if (values.data?.result.isNullOrEmpty()) {
-//                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
+////                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
+//                    println("Nr Logs queried from Loki: " + values.data?.result?.size)
 //                }
+
                 return parseValues(response.body())
             }
         }
@@ -86,9 +88,9 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         val offsetEnd = end.minus(offset)
 
         var counter = 0
-        logger.info { "Loki:"+prometheusURL }
+//        logger.info { "Loki:"+prometheusURL }
         while (counter < RETRIES) {
-            logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
+            logger.info { "Request collected metrics from Loki for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
 //            logger.info { "Log query: {$encodedQuery}" }
             val request = HttpRequest.newBuilder()
@@ -106,14 +108,15 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
                 logger.warn { "Could not connect to Loki: $message. Retry $counter/$RETRIES." }
                 counter++
             } else {
-//                val values = parseValues(response.body())
-//                if (values.data?.result.isNullOrEmpty()) {
+                val values = parseValues(response.body())
+                if (values.data?.result.isNullOrEmpty()) {
 //                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
-//                }
+                    println("Nr Logs queried from Loki: " + values.data?.result?.size)
+                }
                 return parseLogValues(response.body())
             }
         }
-        throw ConnectException("No answer from Prometheus received.")
+        throw ConnectException("No answer from Loki received.")
     }
 
     /**

@@ -109,7 +109,7 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
                 counter++
             } else {
                 val values = parseLogValues(response.body())
-                if (values.data?.result.isNullOrEmpty()) {
+                if (values.data?.result?.isNotEmpty() == true) {
 //                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
                     logger.info("Nr Logs queried from Loki: " + values.data?.result?.size)
                 }

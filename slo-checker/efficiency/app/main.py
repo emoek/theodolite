@@ -47,6 +47,7 @@ def aggr_query(values: dict, warmup: int, aggr_func):
     # logger.info("SECOND:",values)
     # logger.info("TYPE:",type(values))
     # logger.info(len(values))
+    # print(values)
     df = pd.DataFrame.from_dict(values)
     df.columns = ['timestamp', 'value']
     filtered = df[df['timestamp'] >= (df['timestamp'][0] + warmup)]
@@ -232,7 +233,10 @@ async def check_slo(request: Request):
     loadCons = []
     idleLogs = []
     loadLogs = []
+    resultWLQ = 1
+    resultCons = 1
 
+    isRawLogs = False
     
     for entry in data["results"]["first"]:
 
@@ -244,18 +248,37 @@ async def check_slo(request: Request):
 
 
 
-
+        
         if entry["second"]["third"]:
-            idleLogs.append(entry["second"]["third"][0]["values"])
+            if entry["second"]["third"][0]["stream"] != None:
+                isRawLogs = True 
+                idleLogs.append(entry["second"]["third"][0]["values"])
+            else:
+                idleLogs.append(entry["second"]["third"][0]["values"][-1][1])
 
         # Extract log values if present
         if entry["third"]["third"]:
-            loadLogs.append(entry["third"]["third"][0]["values"])
+            if entry["third"]["third"][0]["stream"] != None:
+                isRawLogs = True 
+
+
+                loadLogs.append(entry["third"]["third"][0]["values"])
+            else:
+                loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
 
 
-    resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
+
+    if isRawLogs:
+        resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
+    else:
+        resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0]) - (pd.DataFrame(idleLogs).aggregate('mean').at[0])
+
+
+
+
+
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
     result = resultWLQ / resultCons
@@ -290,7 +313,10 @@ async def check_slo(request: Request):
     loadCons = []
     idleLogs = []
     loadLogs = []
+    resultWLQ = 1
+    resultCons = 1
 
+    isRawLogs = False
     
     for entry in data["results"]["first"]:
 
@@ -304,15 +330,35 @@ async def check_slo(request: Request):
 
 
         if entry["second"]["third"]:
-            idleLogs.append(entry["second"]["third"][0]["values"])
+            if entry["second"]["third"][0]["stream"] != None:
+                isRawLogs = True 
+                idleLogs.append(entry["second"]["third"][0]["values"])
+            else:
+                idleLogs.append(entry["second"]["third"][0]["values"][-1][1])
 
         # Extract log values if present
         if entry["third"]["third"]:
-            loadLogs.append(entry["third"]["third"][0]["values"])
+            if entry["third"]["third"][0]["stream"] != None:
+                isRawLogs = True
+                loadLogs.append(entry["third"]["third"][0]["values"])
+            else:
+                loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
+
+        # if entry["second"]["third"]:
+        #     idleLogs.append(entry["second"]["third"][0]["values"])
+
+        # # Extract log values if present
+        # if entry["third"]["third"]:
+        #     loadLogs.append(entry["third"]["third"][0]["values"])
+
+
+    if isRawLogs:
+        resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
+    else:
+        resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0]) - (pd.DataFrame(idleLogs).aggregate('mean').at[0])
 
 
 
-    resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
     resultCons = calcConsumption(loadCons, metadata)
 
     result = resultWLQ / resultCons
@@ -353,7 +399,10 @@ async def check_slo(request: Request):
     baseCons = []
     loadCons = []
     loadLogs = []
+    resultWLQ = 1
+    resultCons = 1
 
+    isRawLogs = False
     # counter = 0
     # Extract values
     for entry in data["results"]["first"]:
@@ -378,16 +427,29 @@ async def check_slo(request: Request):
 
 
         # Extract log values if present
-        if entry["third"]["third"]:
-            loadLogs.append(entry["third"]["third"][0]["values"])
-        else :
-            loadLogs.append[1]
+        # if entry["third"]["third"]:
+        #     loadLogs.append(entry["third"]["third"][0]["values"])
+        # else :
+        #     loadLogs.append[1]
+        
+        if entry["second"]["third"]:
+
+            if entry["third"]["third"][0]["stream"] != None:
+                isRawLogs = True
+                loadLogs.append(entry["third"]["third"][0]["values"])
+            else:
+                loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
-    print(loadCons)
+    # print(loadCons)
 
 
-    resultWLQ = calcWorkloadLog(loadLogs, metadata)
+    if isRawLogs:
+        resultWLQ = calcWorkloadLog(loadLogs, metadata)
+    else:
+        resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+
+
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
     result = resultWLQ / resultCons
@@ -422,13 +484,19 @@ async def check_slo(request: Request):
 
     loadCons = []
     loadLogs = []
+    resultWLQ = 1
+    resultCons = 1
 
-    print(data["results"]["first"]["first"])
-    print(isinstance(data['results']['first'], dict))
-    print(len(data["results"]["first"]))
+    isStaged = False
+    isRawLogs = False
+
+
+    # print(data["results"]["first"]["first"])
+    # print(isinstance(data['results']['first'], dict))
+    # print(len(data["results"]["first"]))
 
     if len(data["results"]["first"]) > 2:
-
+        isStaged = True
         for entry in data["results"]["first"]:
 
 
@@ -440,7 +508,13 @@ async def check_slo(request: Request):
 
             # Extract log values if present
             if entry["third"]["third"]:
-                loadLogs.append(entry["third"]["third"][0]["values"])
+                if entry["third"]["third"][0]["stream"]:
+                    loadLogs.append(entry["third"]["third"][0]["values"])
+                    print("raw logs")
+                    isRawLogs = True
+                else:
+                    print("No raw logs")
+                    loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
     else:
         for entry in data["results"]["first"]["first"]:
 
@@ -449,15 +523,27 @@ async def check_slo(request: Request):
             
 
         for entry in data["results"]["first"]["second"]:
+            if entry[0]["stream"] != None:
+                loadLogs.append(entry[0]["values"])
+                print("raw logs")
+                isRawLogs = True
+
+            else:
+                
+                loadLogs.append(entry[0]["values"][-1][1])
+                print("No raw logs")
 
 
-            loadLogs.append(entry[0]["values"])
-         
+
+    if isRawLogs:
+        resultWLQ = calcWorkloadLog(loadLogs, metadata)
+    else:
+        loadLogs = [int(item) for item in loadLogs]
+        resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+        print(resultWLQ)
 
 
 
-
-    resultWLQ = calcWorkloadLog(loadLogs, metadata)
     resultCons = calcConsumption(loadCons, metadata)
 
     result = resultWLQ / resultCons

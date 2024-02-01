@@ -273,6 +273,10 @@ async def check_slo(request: Request):
     if isRawLogs:
         resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
     else:
+        idleLogs = [int(item) for item in idleLogs]
+
+        loadLogs = [int(item) for item in loadLogs]
+
         resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0]) - (pd.DataFrame(idleLogs).aggregate('mean').at[0])
 
 
@@ -355,6 +359,10 @@ async def check_slo(request: Request):
     if isRawLogs:
         resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
     else:
+        idleLogs = [int(item) for item in idleLogs]
+
+        loadLogs = [int(item) for item in loadLogs]
+
         resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0]) - (pd.DataFrame(idleLogs).aggregate('mean').at[0])
 
 
@@ -432,11 +440,11 @@ async def check_slo(request: Request):
         # else :
         #     loadLogs.append[1]
         
-        if entry["second"]["third"]:
-
+        if entry["third"]["third"]:
             if entry["third"]["third"][0]["stream"] != None:
                 isRawLogs = True
                 loadLogs.append(entry["third"]["third"][0]["values"])
+
             else:
                 loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
@@ -447,6 +455,8 @@ async def check_slo(request: Request):
     if isRawLogs:
         resultWLQ = calcWorkloadLog(loadLogs, metadata)
     else:
+        loadLogs = [int(item) for item in loadLogs]
+
         resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
 
 

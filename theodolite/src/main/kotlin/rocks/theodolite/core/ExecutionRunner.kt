@@ -34,7 +34,7 @@ class ExecutionRunner(
             val res = searchStrategy.experimentRunner.results
             val resString = res.getExperimentResults().map { (key, value) -> listOf(key.first.toString(), key.second.toString(), value.toString()) }
 //            ioHandler.writeToJSONFile(res.getExperimentResults(), "${resultsFolder}exp${executionId}-resultOfExperiments.json")
-            ioHandler.writeToCSVFile("${resultsFolder}exp${executionId}-resultOfExperiments.json", resString, listOf())
+            ioHandler.writeToCSVFile("${resultsFolder}exp${executionId}-resultOfExperiments.json", resString, listOf("Load", "Resource", "Result"))
 //            ioHandler.writeToJSONFile( )
             // Create expXYZ_demand.csv file or expXYZ_capacity.csv depending on metric
             when (metric) {

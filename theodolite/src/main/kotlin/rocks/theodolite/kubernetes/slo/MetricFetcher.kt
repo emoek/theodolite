@@ -108,11 +108,11 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
                 logger.warn { "Could not connect to Loki: $message. Retry $counter/$RETRIES." }
                 counter++
             } else {
-                val values = parseLogValues(response.body())
-                if (values.data?.result?.isNotEmpty() == true) {
-//                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
-                    logger.info("Nr Logs queried from Loki: " + values.data?.result?.size)
-                }
+//                val values = parseLogValues(response.body())
+//                if (values.data?.result?.isNotEmpty() == true) {
+////                    throw NoSuchFieldException("Empty query result: $values between for query '$query' in interval [$offsetStart,$offsetEnd] .")
+//                    logger.info("Nr Logs queried from Loki: " + values.data?.result?.size)
+//                }
                 return parseLogValues(response.body())
             }
         }

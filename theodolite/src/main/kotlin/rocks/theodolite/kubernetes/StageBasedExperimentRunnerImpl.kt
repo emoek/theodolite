@@ -38,7 +38,6 @@ class StageBasedExperimentRunnerImpl(
 
     override fun runExperiment(load: Int, resource: Int): Boolean {
         var result = false
-//        val executionIntervals: MutableList<Pair<Instant, Instant>> = ArrayList()
         val executionIntervals: MutableList<MutableList<Triple<String, Instant, Instant>>> = ArrayList()
 
 
@@ -68,14 +67,17 @@ class StageBasedExperimentRunnerImpl(
 
 
 
-            collectSlos.map {
-                StageBasedAnalysisExecutor(slo = it, executionId = executionId)
-                        .collect(
-                                load = load,
-                                resource = resource,
-                                executionIntervals = executionIntervals
-                        )
+            if (collectSlos.isNotEmpty()) {
 
+                collectSlos.map {
+                    StageBasedAnalysisExecutor(slo = it, executionId = executionId)
+                            .collect(
+                                    load = load,
+                                    resource = resource,
+                                    executionIntervals = executionIntervals
+                            )
+
+                }
             }
 
 
@@ -95,7 +97,7 @@ class StageBasedExperimentRunnerImpl(
 
 
             if (efficiencySlos.isNotEmpty()) {
-                logger.info { "Wait ${this.loadGenerationDelay} seconds for the logs before starting the Analysis Executor." }
+                logger.info { "Wait ${this.loadGenerationDelay} seconds for the logs before starting the Stage Based Analysis Executor." }
                 Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
                 val efficiencyResults = efficiencySlos.map {
                     StageBasedAnalysisExecutor(slo = it, executionId = executionId)

@@ -52,20 +52,31 @@ class ExperimentRunnerImpl(
             }
         }
 
-//        val (scalabilitySlos, nonScalabilitySlos) = slos.partition { it.sloType.lowercase() in listOf("generic","lag_trend", "lag_trend_ratio") }
 
         val (collectSlos, analysisSlos) = slos.partition { it.sloType.lowercase() == "collect" }
         val (efficiencySlos, scalabilitySlos) = analysisSlos.partition { it.sloType.lowercase() == "efficiency" }
         val experimentResults: MutableList<Boolean> = mutableListOf()
 
 
-//        if (nonScalabilitySlos.isNotEmpty()) {
-//            logger.info { "In the non-staged execution only the slo types of generic, lag_trend, and lag_trend_ratio can be used!" }
-//        }
+
         /**
          * Analyse the experiment, if [run] is true, otherwise the experiment was canceled by the user.
          */
         if (this.run.get()) {
+
+            if (collectSlos.isNotEmpty()) {
+
+                collectSlos.map {
+                    AnalysisExecutor(slo = it, executionId = executionId)
+                            .collect(
+                                    load = 0,
+                                    resource = 0,
+                                    executionIntervals = executionIntervals
+                            )
+
+                }
+            }
+
 
             if (scalabilitySlos.isNotEmpty()) {
 

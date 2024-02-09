@@ -39,8 +39,6 @@ class NonIsolatedExperimentRunnerImpl(
 
     override fun runExperiment(loads: List<Int>, resources: List<Int>) : Boolean {
         var result = false
-//        val executionIntervals: MutableList<Pair<Instant, Instant>> = ArrayList()
-//        val executionIntervals: MutableList<MutableList<Triple<String, Instant, Instant>>> = ArrayList()
         val executionIntervals: MutableList<Pair<Instant, Instant>> = ArrayList()
 
 
@@ -66,14 +64,17 @@ class NonIsolatedExperimentRunnerImpl(
 
         if(this.run.get()) {
 
-            collectSlos.map {
-                AnalysisExecutor(slo = it, executionId = executionId)
-                        .collect(
-                                load = 0,
-                                resource = 0,
-                                executionIntervals = executionIntervals
-                        )
+            if (collectSlos.isNotEmpty()) {
 
+                collectSlos.map {
+                    AnalysisExecutor(slo = it, executionId = executionId)
+                            .collect(
+                                    load = 0,
+                                    resource = 0,
+                                    executionIntervals = executionIntervals
+                            )
+
+                }
             }
 
             if (scalabilitySlos.isNotEmpty()) {
@@ -88,7 +89,8 @@ class NonIsolatedExperimentRunnerImpl(
 
 
             if (efficiencySlos.isNotEmpty()) {
-
+                logger.info { "Wait ${this.loadGenerationDelay} seconds for the logs before starting the Analysis Executor." }
+                Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
                 val efficiencyResults = efficiencySlos.map {
                     AnalysisExecutor(slo = it, executionId = executionId)
                             .analyzeEfficiency(loads, resources, executionIntervals)
@@ -113,94 +115,12 @@ class NonIsolatedExperimentRunnerImpl(
         return result
     }
     override fun runExperiment(load: Int, resource: Int): Boolean {
-        var result = false
-//        val executionIntervals: MutableList<Pair<Instant, Instant>> = ArrayList()
-        val executionIntervals: MutableList<MutableList<Triple<String, Instant, Instant>>> = ArrayList()
-
-
-
-
-//        for (i in 1.rangeTo(repetitions)) {
-//            if (this.run.get()) {
-//                logger.info { "Run repetition $i/$repetitions" }
-//                executionIntervals.add(
-//                        runSingleExperiment(
-//                                load, resource
-//                        )
-//                )
-//            } else {
-//                break
-//            }
-//        }
-
-
-        /**
-         * Analyse the experiment, if [run] is true, otherwise the experiment was canceled by the user.
-         */
-//        if (this.run.get()) {
-//
-//
-//
-//            val (collectSlos, analysisSlos) = slos.partition { it.sloType.lowercase() == "collect" }
-//            val (efficiencySlos, scalabilitySlos) = analysisSlos.partition { it.sloType.lowercase() == "efficiency" }
-//
-//
-//
-//
-//
-//            collectSlos.map {
-//                StageBasedAnalysisExecutor(slo = it, executionId = executionId)
-//                        .collect(
-//                                load = load,
-//                                resource = resource,
-//                                executionIntervals = executionIntervals
-//                        )
-//
-//            }
-//
-//
-//            val experimentResults: MutableList<Boolean> = mutableListOf()
-//
-//            if (scalabilitySlos.isNotEmpty()) {
-//                val scalabilityResults = scalabilitySlos.map {
-//                    StageBasedAnalysisExecutor(slo = it, executionId = executionId)
-//                            .analyze(
-//                                    load = load,
-//                                    resource = resource,
-//                                    executionIntervals = executionIntervals
-//                            )
-//                }
-//                experimentResults.addAll(scalabilityResults)
-//            }
-//
-//
-//            if (efficiencySlos.isNotEmpty()) {
-//                val efficiencyResults = efficiencySlos.map {
-//                    StageBasedAnalysisExecutor(slo = it, executionId = executionId)
-//                            .analyzeEfficiency(
-//                                    load = load,
-//                                    resource = resource,
-//                                    executionIntervals = executionIntervals
-//                            )
-//                }
-//
-//                experimentResults.addAll(efficiencyResults)
-//            }
-//
-//
-//            result = (false !in experimentResults)
-//            this.results.addExperimentResult(Pair(load, resource), result)
-//        } else {
-//            throw ExecutionFailedException("The execution was interrupted")
-//        }
         return true
     }
 
 
     private fun runSingleExperiment(loads: List<Int>, resources: List<Int>): Pair<Instant, Instant> {
-//        lateinit var timestamp : MutableList<Instant,Instant> = mutableListOf()
-//        var timestamp: Pair<Instant, Instant> = mutableListOf()
-//        var benchmarkDeployment: BenchmarkDeployment
+
         val start = Instant.now()
 
         loads.zip(resources).forEach { (load, resource) ->
@@ -222,8 +142,6 @@ class NonIsolatedExperimentRunnerImpl(
 
             try {
 
-//                logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the execution." }
-//                Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
 
 
                 benchmarkDeployment.setup("")

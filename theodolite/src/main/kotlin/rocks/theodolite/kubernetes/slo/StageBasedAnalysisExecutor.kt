@@ -27,11 +27,11 @@ class StageBasedAnalysisExecutor(
 
 
     /**
-     *  Analyses an experiment via prometheus data.
-     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  Collects an experiment via prometheus or loki data during provided stages.
+     *  First fetches data, then documents them.
      *  @param load of the experiment.
      *  @param resource of the experiment.
-     *  @param executionIntervals list of start and end points of experiments
+     *  @param executionIntervals list of start and end points of experiments and the stage
      *  @return true if the experiment succeeded.
      */
     fun collect(load: Int, resource: Int, executionIntervals: List<List<Triple<String,Instant, Instant>>>) {
@@ -64,7 +64,6 @@ class StageBasedAnalysisExecutor(
                         if (stage in listOf("base", "idle", "load") && stages.contains(stage)) {
 
 
-                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
                             val lokiData = fetcher.fetchLogs(
                                     start = start,
                                     end = end,
@@ -72,11 +71,17 @@ class StageBasedAnalysisExecutor(
                                     query = SloConfigHandler.getQueryString(slo = slo)
                             )
 
-                            ioHandler.writeToCSVFile(
-                                    fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
-                                    data = lokiData.getResultAsList(),
-                                    columns = listOf("labels", "timestamp", "value")
-                            )
+                            if (lokiData.data?.result.isNullOrEmpty()) {
+                                println("The loki collection query for stage $stage did not provide any results! ")
+
+                            } else {
+
+                                ioHandler.writeToCSVFile(
+                                        fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
+                                        data = lokiData.getResultAsList(),
+                                        columns = listOf("labels", "timestamp", "value")
+                                )
+                            }
 
 
                         }
@@ -94,7 +99,6 @@ class StageBasedAnalysisExecutor(
                         if (stage in listOf("base", "idle", "load") && stages.contains(stage)) {
 
 
-                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
                             val prometheusData = fetcher.fetchMetric(
                                     start = start,
                                     end = end,
@@ -102,11 +106,16 @@ class StageBasedAnalysisExecutor(
                                     query = SloConfigHandler.getQueryString(slo = slo)
                             )
 
-                            ioHandler.writeToCSVFile(
-                                    fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
-                                    data = prometheusData.getAllResultAsList(),
-                                    columns = listOf("labels", "timestamp", "value")
-                            )
+                            if (prometheusData.data?.result.isNullOrEmpty()) {
+                                println("The prometheus collection query for stage $stage did not provide any results! ")
+                            } else {
+
+                                ioHandler.writeToCSVFile(
+                                        fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
+                                        data = prometheusData.getAllResultAsList(),
+                                        columns = listOf("labels", "timestamp", "value")
+                                )
+                            }
 
 
                         }
@@ -125,21 +134,16 @@ class StageBasedAnalysisExecutor(
 
 
     /**
-     *  Analyses an experiment via prometheus data.
-     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  Analyses an experiment via prometheus and loki data.
+     *  First fetches data, and afterwards evaluate it via a [slo].
      *  @param load of the experiment.
      *  @param resource of the experiment.
-     *  @param executionIntervals list of start and end points of experiments
+     *  @param executionIntervals list of start and end points of experiments and stage.
      *  @return true if the experiment succeeded.
      */
     fun analyzeEfficiency(load: Int, resource: Int, executionIntervals: List<List<Triple<String, Instant, Instant>>>): Boolean {
-        var repetitionCounter = 1
 
         try {
-//            val ioHandler = IOHandler()
-            val resultsFolder = ioHandler.getResultFolderURL()
-//            val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
-
 
 
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
@@ -151,8 +155,7 @@ class StageBasedAnalysisExecutor(
 
 
 
-            // ALL: + load
-//            val total: MutableList<Triple<Pair<String,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>
+
             val total: MutableList<Triple<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>> = mutableListOf()
             val totalWithLogs: MutableList<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>> = mutableListOf()
 
@@ -190,7 +193,9 @@ class StageBasedAnalysisExecutor(
                         query = SloConfigHandler.getQueryString(slo = slo)
                 )
 
-
+                if (prometheusDataLoad.data?.result.isNullOrEmpty()) {
+                    println("The Prometheus query did not provide any results for the load stage!")
+                }
                 if (prometheusDataLoad.data?.result.isNullOrEmpty() && prometheusDataIdle.data?.result.isNullOrEmpty() && prometheusDataBase.data?.result.isNullOrEmpty()) {
                     throw NoSuchFieldException("The prometheus query did not provide any result for all stages.")
 
@@ -199,8 +204,7 @@ class StageBasedAnalysisExecutor(
 
                 if (workload != DEFAULT_WORKLOAD) {
 
-//                    rocks.theodolite.kubernetes.logger.info { "Wait ${this.loadGenerationDelay} seconds for the logs before starting the Analysis Executor." }
-//                    Thread.sleep(Duration.ofSeconds(10).toMillis())
+
                     if (workloadUrl != DEFAULT_WORKLOADURL) {
                         val fetcher = MetricFetcher(
                                 prometheusURL = workloadUrl,
@@ -228,7 +232,7 @@ class StageBasedAnalysisExecutor(
                         )
 
                         if (logWorkloadDataLoad.data?.result.isNullOrEmpty()) {
-                            throw NoSuchFieldException("The loki query did not provide any result for the load stage which is a necessity.")
+                            println("The loki query did not provide any result for the load stage which is a necessity.")
                         }
                     } else {
 
@@ -256,7 +260,7 @@ class StageBasedAnalysisExecutor(
                         )
 
                         if (workloadDataLoad.data?.result.isNullOrEmpty()) {
-                            throw NoSuchFieldException("The prometheus query did not provide any result for the workload query in load stage which is a necessity.")
+                            println("The prometheus query did not provide any result for the workload query in load stage which is a necessity.")
                         }
                     }
 
@@ -300,18 +304,17 @@ class StageBasedAnalysisExecutor(
 
 
     /**
-     *  Analyses an experiment via prometheus data.
-     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  Analyses an experiment via prometheus.
+     *  First fetches data, document the data, and afterwards evaluate it via a [slo].
      *  @param load of the experiment.
      *  @param resource of the experiment.
-     *  @param executionIntervals list of start and end points of experiments
+     *  @param executionIntervals list of start and end points of experiments and stage.
      *  @return true if the experiment succeeded.
      */
     fun analyze(load: Int, resource: Int, executionIntervals: List<List<Triple<String,Instant, Instant>>>): Boolean {
         var repetitionCounter = 1
 
         try {
-//            val ioHandler = IOHandler()
             val resultsFolder = ioHandler.getResultFolderURL()
             val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
 
@@ -338,6 +341,10 @@ class StageBasedAnalysisExecutor(
                         prometheusDataList.add(prometheusData)
 
 
+                        if (prometheusData.data?.result.isNullOrEmpty()) {
+                            throw NoSuchFieldException("The prometheus query did not provide any result for the load stage which is a necessity.")
+
+                        }
                         ioHandler.writeToCSVFile(
                                 fileURL = "${fileURL}_${slo.name}_${stage}_${repetitionCounter}",
                                 data = prometheusData.getResultAsList(),

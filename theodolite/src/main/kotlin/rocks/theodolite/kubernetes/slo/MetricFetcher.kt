@@ -15,8 +15,8 @@ import java.time.Instant
 private val logger = KotlinLogging.logger {}
 
 /**
- * Used to fetch metrics from Prometheus.
- * @param prometheusURL URL to the Prometheus server.
+ * Used to fetch metrics from Prometheus or Loki.
+ * @param prometheusURL URL to the Prometheus or Loki server.
  * @param offset Duration of time that the start and end points of the queries
  * should be shifted. (for different timezones, etc..)
  */
@@ -44,7 +44,6 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         while (counter < RETRIES) {
             logger.info { "Request collected metrics from Prometheus for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
-//            logger.info { "Log query: {$encodedQuery}" }
             val request = HttpRequest.newBuilder()
                     .uri(URI.create(
                             "$prometheusURL/api/v1/query_range?query=$encodedQuery&start=$offsetStart&end=$offsetEnd&step=${stepSize.toSeconds()}s"))
@@ -73,14 +72,14 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
     }
 
     /**
-     * Tries to fetch a metric by a query to a Prometheus server.
+     * Tries to fetch a metric by a query to a Loki server.
      * Retries to fetch the metric [RETRIES] times.
      * Connects to the server via [prometheusURL].
      *
      * @param start start point of the query.
      * @param end end point of the query.
      * @param query query for the prometheus server.
-     * @throws ConnectException - if the prometheus server timed out/was not reached.
+     * @throws ConnectException - if the loki server timed out/was not reached.
      */
     fun fetchLogs(start: Instant, end: Instant, stepSize: Duration, query: String): LokiResponse {
 
@@ -88,11 +87,9 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         val offsetEnd = end.minus(offset)
 
         var counter = 0
-//        logger.info { "Loki:"+prometheusURL }
         while (counter < RETRIES) {
             logger.info { "Request collected metrics from Loki for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
-//            logger.info { "Log query: {$encodedQuery}" }
             val request = HttpRequest.newBuilder()
                     .uri(URI.create(
                             "$prometheusURL/loki/api/v1/query_range?query=$encodedQuery&start=$offsetStart&end=$offsetEnd&step=${stepSize.toSeconds()}s"))
@@ -132,9 +129,9 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
     }
 
     /**
-     * Deserializes a response from Prometheus.
-     * @param values Response from Prometheus.
-     * @return a [PrometheusResponse]
+     * Deserializes a response from Loki.
+     * @param values Response from Loki.
+     * @return a [LokiResponse]
      */
     private fun parseLogValues(values: String): LokiResponse {
         return ObjectMapper().readValue<LokiResponse>(

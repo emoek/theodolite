@@ -21,7 +21,7 @@ abstract class SearchStrategy(val experimentRunner: ExperimentRunner) {
      *
      * @param loads List of possible loads for the experiments.
      * @param resources List of possible resources for the experiments.
-     * @param metric The [Metric] for the experiments, either "demand" or "capacity".
+     * @param metric The [Metric] for the experiments, either "demand" or "capacity" or "efficiency".
      */
     fun applySearchStrategyByMetric(loads: List<Int>, resources: List<Int>, metric: Metric) {
 
@@ -42,11 +42,9 @@ abstract class SearchStrategy(val experimentRunner: ExperimentRunner) {
 
             Metric.EFFICIENCY ->
                 if(experimentRunner.run.get()) {
-//                    this.run(loads, resources)
 
                     experimentRunner.runExperiment(loads,resources)
 
-//                    this.runExperiment(loads,resources)
 
                 }
         }

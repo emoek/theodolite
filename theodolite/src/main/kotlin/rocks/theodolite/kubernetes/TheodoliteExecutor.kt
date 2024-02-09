@@ -44,6 +44,7 @@ class TheodoliteExecutor(
      * @return a [Config], that contains a list of LoadDimension s,
      *          a list of Resource s , and the [restrictionSearch].
      * The [SearchStrategy] is configured and able to find the minimum required resource for the given load.
+     * The Experiment Runner is being initialized based on user input.
      */
     private fun buildConfig(): Config {
         val results = Results(Metric.from(benchmarkExecution.execution.metric))
@@ -144,9 +145,19 @@ class TheodoliteExecutor(
                             "New order is: ${benchmarkExecution.resources.resourceValues}"
                 }
             }
+        } else {
+            val loadNr = benchmarkExecution.load.loadValues.size
+            val resourceNr = benchmarkExecution.resources.resourceValues.size
+
+            if (loadNr < resourceNr) {
+                logger.info {"The number of load and resource instances is uneven. Therefore only the first $loadNr are used." }
+            } else {
+                logger.info {"The number of load and resource instances is uneven. Therefore only the first $resourceNr are used." }
+            }
         }
 
         if (benchmarkExecution.execution.experimentType == NONISOLATED) {
+            logger.info { "The nonisolated experiment runner is being used. Hence, per default the dummy NoSearch strategy and the metric efficiency is being used." }
             return Config(
                     loads = benchmarkExecution.load.loadValues,
                     resources = benchmarkExecution.resources.resourceValues,

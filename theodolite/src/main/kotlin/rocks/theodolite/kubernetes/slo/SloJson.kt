@@ -45,13 +45,3 @@ class LogEfficiencySloJson(
         override var metadata: Map<String, Any>
 ) : AbstractSloJson()
 
-
-//class DefaultEfficiencySloJson(
-//        override val results: Pair<List<Pair<Pair<String, List<PromResult>>,Pair<String, List<PromResult>>>>, Int>,
-//        override var metadata: Map<String, Any>
-//) : AbstractSloJson()
-
-//class EfficiencySloJson(
-//        override val results: List<Pair<Triple<String, List<PromResult>, List<PromResult>>, Triple<String, List<PromResult>, List<PromResult>>>>,
-//        override var metadata: Map<String, Any>
-//) : AbstractSloJson()

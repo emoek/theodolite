@@ -37,18 +37,16 @@ class AnalysisExecutor(
 
 
     /**
-     *  Analyses an experiment via prometheus data.
-     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  Collect an experiment via prometheus or loki data.
+     *  First fetches data from prometheus/loki, then documents them.
      *  @param load of the experiment.
      *  @param resource of the experiment.
      *  @param executionIntervals list of start and end points of experiments
-     *  @return true if the experiment succeeded.
      */
     fun collect(load: Int, resource: Int, executionIntervals: List<Pair<Instant, Instant>>) {
         var repetitionCounter = 1
 
         try {
-//            val ioHandler = IOHandler()
             val resultsFolder = ioHandler.getResultFolderURL()
             val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
 
@@ -70,7 +68,6 @@ class AnalysisExecutor(
 
 
 
-                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
                             val lokiData = fetcher.fetchLogs(
                                     start = intervalList.first,
                                     end = intervalList.second,
@@ -102,7 +99,6 @@ class AnalysisExecutor(
 
 
 
-                            // ADAPT FETCH METRIC SO THAT ALL PODS/CONTAINERS ARE PROVIDED FOR ANALYSIS
                             val prometheusData = fetcher.fetchMetric(
                                     start = intervalList.first,
                                     end = intervalList.second,
@@ -174,7 +170,6 @@ class AnalysisExecutor(
                     }
             if (prometheusData.isEmpty()) {
                 throw NoSuchFieldException("The prometheus query did not provide any result for the query.")
-
             }
             prometheusData.forEach{ data ->
                 ioHandler.writeToCSVFile(
@@ -206,20 +201,16 @@ class AnalysisExecutor(
 
 
     /**
-     *  Analyses an experiment via prometheus data.
-     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
+     *  Analyses an experiment via prometheus and loki data.
+     *  First fetches data, and afterwards evaluate it via a [slo].
      *  @param load of the experiment.
      *  @param resource of the experiment.
      *  @param executionIntervals list of start and end points of experiments
      *  @return true if the experiment succeeded.
      */
     fun analyzeEfficiency(load: Int, resource: Int, executionIntervals: List<Pair<Instant, Instant>>): Boolean {
-        var repetitionCounter = 1
 
         try {
-            val ioHandler = IOHandler()
-            val resultsFolder = ioHandler.getResultFolderURL()
-            val fileURL = "${resultsFolder}exp${executionId}_${load}_${resource}_${slo.sloType.toSlug()}"
 
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
             val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
@@ -237,13 +228,6 @@ class AnalysisExecutor(
                         )
                     }
 
-//            prometheusData.forEach{ data ->
-//                ioHandler.writeToCSVFile(
-//                        fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
-//                        data = data.getResultAsList(),
-//                        columns = listOf("labels", "timestamp", "value")
-//                )
-//            }
 
             var lokiData = listOf<LokiResponse>()
             var workloadData = listOf<PrometheusResponse>()
@@ -263,15 +247,6 @@ class AnalysisExecutor(
                                         query = workload
                                 )
                             }
-
-//                    lokiData.forEach{ data ->
-//                        ioHandler.writeToCSVFile(
-//                                fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
-//                                data = data.getResultAsList(),
-//                                columns = listOf("labels", "timestamp", "value")
-//                        )
-//                    }
-
 
 
 
@@ -323,20 +298,16 @@ class AnalysisExecutor(
 
 
     /**
-     *  Analyses an experiment via prometheus data.
-     *  First fetches data from prometheus, then documents them and afterwards evaluate it via a [slo].
-     *  @param load of the experiment.
-     *  @param resource of the experiment.
+     *  Analyses an experiment via prometheus and loki data for the non isolated experiment runner.
+     *  First fetches data, and afterwards evaluate it via a [slo].
+     *  @param loads of the experiments.
+     *  @param resources of the experiments.
      *  @param executionIntervals list of start and end points of experiments
      *  @return true if the experiment succeeded.
      */
     fun analyzeEfficiency(loads: List<Int>, resources: List<Int>, executionIntervals: List<Pair<Instant, Instant>>): Boolean {
-        var repetitionCounter = 1
 
         try {
-            val ioHandler = IOHandler()
-            val resultsFolder = ioHandler.getResultFolderURL()
-            val fileURL = "${resultsFolder}exp${executionId}_${slo.sloType.toSlug()}"
 
             val stepSize = slo.properties["promQLStepSeconds"]?.toLong()?.let { Duration.ofSeconds(it) } ?: DEFAULT_STEP_SIZE
             val workload = slo.properties["workloadQuery"]?.lowercase() ?: DEFAULT_WORKLOAD
@@ -354,13 +325,11 @@ class AnalysisExecutor(
                         )
                     }
 
-//            prometheusData.forEach{ data ->
-//                ioHandler.writeToCSVFile(
-//                        fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
-//                        data = data.getResultAsList(),
-//                        columns = listOf("labels", "timestamp", "value")
-//                )
-//            }
+            if (prometheusData.isEmpty()) {
+                throw NoSuchFieldException("The prometheus query did not provide any result.")
+            }
+
+
 
             var lokiData = listOf<LokiResponse>()
             var workloadData = listOf<PrometheusResponse>()
@@ -382,13 +351,6 @@ class AnalysisExecutor(
                                 )
                             }
 
-//                    lokiData.forEach{ data ->
-//                        ioHandler.writeToCSVFile(
-//                                fileURL = "${fileURL}_${slo.name}_${repetitionCounter++}",
-//                                data = data.getResultAsList(),
-//                                columns = listOf("labels", "timestamp", "value")
-//                        )
-//                    }
 
 
 

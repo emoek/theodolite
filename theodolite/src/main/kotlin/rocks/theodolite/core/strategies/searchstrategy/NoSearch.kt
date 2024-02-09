@@ -10,7 +10,7 @@ private val logger = KotlinLogging.logger {}
  * load list (capacity metric) in a linear-search-like fashion, but **without stopping** once the desired
  * resource (demand) or load (capacity) is found.
  *
- * @see LinearSearch for a SearchStrategy that stops once the desired resource (demand) or load (capacity) is found.
+ * @see NoSearch for a dummy SearchStrategy that has no functionality and is used only for the non isolated experiment runner.
  *
  * @param experimentRunner Benchmark executor which runs the individual benchmarks.
  */
@@ -37,9 +37,5 @@ class NoSearch(experimentRunner: ExperimentRunner) : SearchStrategy(experimentRu
         return maxSuitableLoad
     }
 
-//    fun runExperiment(resources: List<Int>, loads: List<Int>): Int? {
-//        experimentRunner.runExperiment(loads,resources)
-//
-//        return 0
-//    }
+
 }

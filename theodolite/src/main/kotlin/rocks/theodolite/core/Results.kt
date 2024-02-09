@@ -56,7 +56,7 @@ class Results(val metric: Metric) {
                 }
 
             Metric.EFFICIENCY ->
-                println("Efficiency Metric")
+                println("")
         }
     }
 

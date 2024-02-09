@@ -151,7 +151,7 @@ class TheodoliteExecutor(
 
             if (loadNr != resourceNr) {
                 logger.info {"The number of load and resource instances is uneven. Therefore only the first smaller number is being used are used." }
-            } 
+            }
         }
 
         if (benchmarkExecution.execution.experimentType == NONISOLATED) {

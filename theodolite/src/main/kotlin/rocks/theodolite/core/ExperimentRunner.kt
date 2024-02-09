@@ -40,7 +40,7 @@ abstract class ExperimentRunner(val results: Results) {
      *     given resource, false otherwise.
      */
     open fun runExperiment(loads: List<Int>, resources: List<Int>): Boolean {
-        println("Override in NonIsolatedExperimentRunnerImpl")
+        //Override in NonIsolatedExperimentRunnerImpl
         return true
 
     }

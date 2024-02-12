@@ -402,8 +402,8 @@ kepler:
     annotations: {}
     name: ""
   serviceMonitor:
-    enabled: false
-    namespace: ""
+    enabled: true
+    namespace: "default"
     interval: 30s
     scrapeTimeout: 5s
     labels: {}

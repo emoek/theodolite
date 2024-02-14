@@ -23,6 +23,7 @@ private val logger = KotlinLogging.logger {}
 class MetricFetcher(private val prometheusURL: String, private val offset: Duration) {
     private val RETRIES = 2
     private val TIMEOUT = Duration.ofSeconds(60)
+    private val LOKI_LIMIT = 1000000
 
     /**
      * Tries to fetch a metric by a query to a Prometheus server.
@@ -86,13 +87,14 @@ class MetricFetcher(private val prometheusURL: String, private val offset: Durat
         val offsetStart = start.minus(offset)
         val offsetEnd = end.minus(offset)
 
+
         var counter = 0
         while (counter < RETRIES) {
             logger.info { "Request collected metrics from Loki for interval [$offsetStart,$offsetEnd]." }
             val encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8)
             val request = HttpRequest.newBuilder()
                     .uri(URI.create(
-                            "$prometheusURL/loki/api/v1/query_range?query=$encodedQuery&start=$offsetStart&end=$offsetEnd&step=${stepSize.toSeconds()}s"))
+                            "$prometheusURL/loki/api/v1/query_range?query=$encodedQuery&start=$offsetStart&end=$offsetEnd&limit=$LOKI_LIMIT"))
                     .GET()
                     .version(HttpClient.Version.HTTP_1_1)
                     .timeout(TIMEOUT)

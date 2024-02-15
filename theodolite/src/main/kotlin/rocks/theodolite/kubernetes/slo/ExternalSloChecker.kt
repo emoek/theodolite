@@ -82,7 +82,7 @@ class ExternalSloChecker(
      */
     override fun evaluateStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>,Triple<String,PrometheusResponse,PrometheusResponse>>>, load: Int): Boolean {
         var counter = 0
-        logger.info { "Possible Efficiency slo types: 5, 6, 7, 8, 9, 10, 11, 12" }
+        logger.info { "Possible Efficiency slo types: 5, 6, 7, 8, 9, 10, 11, 12, 14" }
 
 
 
@@ -131,7 +131,7 @@ class ExternalSloChecker(
      */
     override fun evaluateLogAndStageBased(fetchedData: List<Triple<Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>,Triple<String,PrometheusResponse,LokiResponse>>>, load: Int): Boolean {
         var counter = 0
-        logger.info { "Possible Efficiency slo types: 1, 2, 3, 4, 9, 10, 11, 12" }
+        logger.info { "Possible Efficiency slo types: 1, 2, 3, 4, 9, 10, 11, 12, 13" }
 
 
 
@@ -184,7 +184,7 @@ class ExternalSloChecker(
     override fun evaluateLogEfficiency(fetchedData: Pair<List<PrometheusResponse>, List<LokiResponse>>, load: Int): Boolean {
         var counter = 0
 
-        logger.info { "Possible Efficiency slo types: 4, 10" }
+        logger.info { "Possible Efficiency slo types: 4, 10, 13" }
 
 
         val data = LogEfficiencySloJson(
@@ -230,7 +230,7 @@ class ExternalSloChecker(
     override fun evaluateEfficiency(fetchedData: Pair<List<PrometheusResponse>, List<PrometheusResponse>>, load: Int): Boolean {
         var counter = 0
 
-        logger.info { "Possible Efficiency slo types: 8, 10" }
+        logger.info { "Possible Efficiency slo types: 8, 10, 14" }
 
 
 

@@ -231,7 +231,7 @@ operator:
   enabled: true
   
   image: emreoe/theomod
-  imageTag: 1.9
+  imageTag: latest
   imagePullPolicy: Always
 
   nodeSelector: {}
@@ -262,7 +262,7 @@ operator:
     efficiency:
       enabled: true
       image: emreoe/theodolite-slo-checker-efficiency
-      imageTag: 1.5
+      imageTag: latest
       imagePullPolicy: Always
       resources:
         requests:
@@ -350,6 +350,73 @@ operator:
 
 
 
+# loki-stack:
+#   enabled: true
+#   promtail:
+#     enabled: false
+#   grafana:
+#     enabled: false
+#   mode: standalone
+#   nodeSelector: {}
+#   schema_config:
+#     configs: 
+#       limits_config:
+#         retention_period: 72h
+#         enforce_metric_name: false
+#         reject_old_samples: true
+#         reject_old_samples_max_age: 168h
+#         max_cache_freshness_per_query: 10m
+#         split_queries_by_interval: 15m
+#         per_stream_rate_limit: 512M
+#         per_stream_rate_limit_burst: 1024M
+#         cardinality_limit: 200000
+#         max_entries_limit_per_query: 1000000  
+#       ingestion_rate_mb: 100000
+#       ingestion_burst_size_mb: 10000
+#       max_entries_limit_per_query: 1000000
+#       max_label_value_length: 204800
+#       max_label_name_length: 102400
+#       max_label_names_per_series: 30000
+
+
+
+# loki-stack:
+#   enabled: true
+#   promtail:
+#     enabled: false
+#   grafana:
+#     enabled: false
+#   mode: standalone
+#   nodeSelector: {}
+#   schema_config:
+#     configs:
+#       - from: 2020-10-24
+#         store: boltdb-shipper
+#         object_store: filesystem
+#         schema: v11
+#         index:
+#           prefix: index_
+#           period: 24h
+#   limits_config:
+#     retention_period: 72h
+#     enforce_metric_name: false
+#     reject_old_samples: true
+#     reject_old_samples_max_age: 168h
+#     max_cache_freshness_per_query: 10m
+#     split_queries_by_interval: 15m
+#     per_stream_rate_limit: 512M
+#     per_stream_rate_limit_burst: 1024M
+#     cardinality_limit: 2000000
+#     ingestion_rate_mb: 1000000
+#     ingestion_burst_size_mb: 100000
+#     max_entries_limit_per_query: 1000000
+#     max_label_value_length: 2048000
+#     max_label_name_length: 1024000
+#     max_label_names_per_series: 30000
+
+
+
+
 loki-stack:
   enabled: true
   promtail:
@@ -358,24 +425,32 @@ loki-stack:
     enabled: false
   mode: standalone
   nodeSelector: {}
-  schema_config:
-    configs: 
+  loki:
+    config:
+      max_entries_limit_per_query: 1000000  
+    config:
       limits_config:
-        retention_period: 72h
-        enforce_metric_name: false
-        reject_old_samples: true
-        reject_old_samples_max_age: 168h
-        max_cache_freshness_per_query: 10m
-        split_queries_by_interval: 15m
-        per_stream_rate_limit: 512M
-        per_stream_rate_limit_burst: 1024M
-        cardinality_limit: 200000
-      ingestion_rate_mb: 10000
-      ingestion_burst_size_mb: 1000
-      max_entries_limit_per_query: 1000000
-      max_label_value_length: 20480
-      max_label_name_length: 10240
-      max_label_names_per_series: 300
+        max_entries_limit_per_query: 1000000
+    limits_config:
+      retention_period: 72h
+      enforce_metric_name: false
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+      max_cache_freshness_per_query: 10m
+      split_queries_by_interval: 15m
+      per_stream_rate_limit: 512M
+      per_stream_rate_limit_burst: 1024M
+      cardinality_limit: 200000
+      max_entries_limit_per_query: 1000000  
+    ingestion_rate_mb: 100000
+    ingestion_burst_size_mb: 10000
+    max_entries_limit_per_query: 1000000
+    max_label_value_length: 204800
+    max_label_name_length: 102400
+    max_label_names_per_series: 30000
+
+
+
 
 
 kepler:

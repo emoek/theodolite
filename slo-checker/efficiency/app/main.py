@@ -6,7 +6,7 @@ import sys
 import re
 import pandas as pd
 import numpy as np
-
+from collections import defaultdict
 
 app = FastAPI()
 app.state.counter = 0
@@ -42,6 +42,11 @@ def get_aggr_func(func_string: str):
             return np.exp(np.mean(np.log(x[x > 0])))  # Ensure positive values only
         geomean.__name__ = 'geomean'
         return geomean
+    elif func_string == 'len':
+        def len(x):
+            return len(x)
+        len.__name__ = 'len'
+        return len
     elif re.search(r'^p\d\d?(\.\d+)?$', func_string): # matches strings like 'p99', 'p99.99', 'p1', 'p0.001'
         def percentile(x):
             return x.quantile(float(func_string[1:]) / 100)
@@ -51,7 +56,6 @@ def get_aggr_func(func_string: str):
         raise ValueError('Invalid function string.')
 
 def aggr_query(values: dict, warmup: int, aggr_func):
-
     df = pd.DataFrame.from_dict(values)
     df.columns = ['timestamp', 'value']
     filtered = df[df['timestamp'] >= (df['timestamp'][0] + warmup)]
@@ -142,8 +146,10 @@ def calcConsumption(loadConsData, metadata):
 def calcStagedWorkloadMetric(idleWorkloadData, loadWorkloadData, metadata):
     
     warmup = int(metadata['warmup'])
-    query_aggregation = get_aggr_func(metadata['queryAggregation'])
+    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
+    query_aggregation = get_aggr_func(metadata['workloadAggregation'])
+
     # operator = metadata['operator']
     # threshold = float(metadata['threshold'])
 
@@ -168,8 +174,9 @@ def calcStagedWorkloadMetric(idleWorkloadData, loadWorkloadData, metadata):
 def calcWorkloadMetric(loadWorkloadData, metadata):
     
     warmup = int(metadata['warmup'])
-    query_aggregation = get_aggr_func(metadata['queryAggregation'])
+    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
+    query_aggregation = get_aggr_func(metadata['workloadAggregation'])
     # operator = metadata['operator']
     # threshold = float(metadata['threshold'])
 
@@ -188,7 +195,8 @@ def calcWorkloadMetric(loadWorkloadData, metadata):
 def calcStagedWorkloadLog(idleWorkloadData, loadWorkloadData, metadata):
     
 
-
+    query_aggregation = get_aggr_func(metadata['workloadAggregation'])
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     nrIdleLogs = [len(r) for r in idleWorkloadData]
 
     nrLoadLogs = [len(r) for r in loadWorkloadData]
@@ -197,8 +205,10 @@ def calcStagedWorkloadLog(idleWorkloadData, loadWorkloadData, metadata):
     logger.info("WLQ Load: %d", nrLoadLogs)
     update_results_data("WLQ_Load", nrLoadLogs)
 
-    logIdleResult = pd.DataFrame(nrIdleLogs).aggregate('mean').at[0]
-    logLoadResult = pd.DataFrame(nrLoadLogs).aggregate('mean').at[0]
+    logIdleResult = pd.DataFrame(nrIdleLogs).aggregate(rep_aggregation).at[0]
+    # logLoadResult = pd.DataFrame(nrLoadLogs).aggregate('mean').at[0]
+    logLoadResult = pd.DataFrame(nrLoadLogs).aggregate(rep_aggregation).at[0]
+
     logger.info("WLQ Idle over repetitions: %d", logIdleResult)
     update_results_data("WLQ_Idle_r", logIdleResult)
     logger.info("WLQ Load over repetitions: %d", logLoadResult)
@@ -211,12 +221,22 @@ def calcStagedWorkloadLog(idleWorkloadData, loadWorkloadData, metadata):
 
 
 def calcWorkloadLog(loadWorkloadData, metadata):
-    
+    warmup = int(metadata['warmup'])
+    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
+
+    query_aggregation = get_aggr_func(metadata['workloadAggregation'])
+
+
+    # maxLoadLogTest = [aggr_query(r, warmup, "max") for r in loadWorkloadData]
+
    
     nrLoadLogs = [len(r) for r in loadWorkloadData]
+
+
     logger.info("WLQ Load: %d", nrLoadLogs)
     update_results_data("WLQ_Load", nrLoadLogs)
-    logResult = pd.DataFrame(nrLoadLogs).aggregate('mean').at[0]
+    logResult = pd.DataFrame(nrLoadLogs).aggregate(rep_aggregation).at[0]
     logger.info("WLQ Load over repetitions: %d", logResult)
     update_results_data("WLQ_Load_r", logResult)
 
@@ -224,6 +244,71 @@ def calcWorkloadLog(loadWorkloadData, metadata):
     result = logResult
 
     return result
+
+
+
+
+
+def calcLogBasedEfficiency(loadCons, loadLogs, type_param, metadata):
+    
+    warmup = int(metadata['warmup'])
+    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
+    total_results = []
+    final_result = 0
+
+
+    if type_param == 2:
+
+        for (load, log) in zip(loadCons, loadLogs):
+            log = {item[0]: item[1] for item in log }
+            results = []
+            for timestamp, consumption in load.items():
+                throughput = float(log.get(timestamp, 0))
+                consumption = float(consumption)
+                if consumption > 0:
+                    results.append(throughput / consumption)
+            
+            results = np.array(results)
+            geomean = np.exp(np.mean(np.log(results[results > 0])))
+            total_results.append(geomean)
+                
+    else:
+
+        for (load, log) in zip(loadCons, loadLogs):
+            results = []
+
+            for i in range(0,len(log)-1):
+                if float(load[log[i][0]]) > 0:
+                    efficiency = log[i][1] / float(load[log[i][0]])
+
+
+
+                    results.append(efficiency)
+                
+
+            results = np.array(results)
+            geomean = np.exp(np.mean(np.log(results[results > 0])))
+            total_results.append(geomean)
+        
+    
+    # final_result = np.mean(total_results)
+    final_result = pd.DataFrame(total_results).aggregate(rep_aggregation).at[0]
+    logger.info("Efficiency Ratio Results: %d", total_results)
+    update_results_data("ERR", total_results)
+
+    logger.info("Efficiency Ratio Results over repetitions: %d", final_result)
+    update_results_data("ERR_r", final_result)
+
+
+
+
+
+    return final_result
+
+
+
+
 
 
 
@@ -249,6 +334,7 @@ async def check_slo(request: Request):
 
 
     metadata = data['metadata']
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     operator = metadata['operator']
     threshold = float(metadata['threshold'])
     values = data["results"]
@@ -292,7 +378,9 @@ async def check_slo(request: Request):
 
                 loadLogs.append(entry["third"]["third"][0]["values"])
             else:
-                loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
+                max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
+                loadLogs.append(max_value)
+                # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
 
@@ -305,8 +393,10 @@ async def check_slo(request: Request):
 
         loadLogs = [int(item) for item in loadLogs]
 
-        idleLogs_r = (pd.DataFrame(idleLogs).aggregate('mean').at[0])
-        loadLogs_r = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+        idleLogs_r = (pd.DataFrame(idleLogs).aggregate(rep_aggregation).at[0])
+        # loadLogs_r = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+        loadLogs_r = (pd.DataFrame(loadLogs).aggregate(rep_aggregation).at[0])
+
 
         resultWLQ = (loadLogs_r) - (idleLogs_r)
 
@@ -359,6 +449,7 @@ async def check_slo(request: Request):
 
 
     metadata = data['metadata']
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     operator = metadata['operator']
     threshold = float(metadata['threshold'])
     values = data["results"]
@@ -397,7 +488,10 @@ async def check_slo(request: Request):
                 isRawLogs = True
                 loadLogs.append(entry["third"]["third"][0]["values"])
             else:
-                loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
+
+                max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
+                loadLogs.append(max_value)
+                # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
     if isRawLogs:
@@ -407,8 +501,8 @@ async def check_slo(request: Request):
 
         loadLogs = [int(item) for item in loadLogs]
         
-        idleLogs_r = (pd.DataFrame(idleLogs).aggregate('mean').at[0])
-        loadLogs_r = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+        idleLogs_r = (pd.DataFrame(idleLogs).aggregate(rep_aggregation).at[0])
+        loadLogs_r = (pd.DataFrame(loadLogs).aggregate(rep_aggregation).at[0])
         resultWLQ = (loadLogs_r) - (idleLogs_r)
 
         update_results_data("WLQ_Idle", idleLogs)
@@ -453,7 +547,9 @@ async def check_slo(request: Request):
 
 
     metadata = data['metadata']
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     operator = metadata['operator']
+    warmup = metadata['warmup']
     threshold = float(metadata['threshold'])
     values = data["results"]
     resultLoad = values['second']
@@ -482,8 +578,11 @@ async def check_slo(request: Request):
                 loadLogs.append(entry["third"]["third"][0]["values"])
 
             else:
-                loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
-
+    
+                max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
+                loadLogs.append(max_value)
+                
+                # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
 
@@ -492,7 +591,8 @@ async def check_slo(request: Request):
     else:
         loadLogs = [int(item) for item in loadLogs]
         
-        resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+        #Repetitions
+        resultWLQ = (pd.DataFrame(loadLogs).aggregate(rep_aggregation).at[0])
 
         update_results_data("WLQ_Load", loadLogs)
         update_results_data("WLQ_Load_r", resultWLQ)
@@ -536,6 +636,7 @@ async def check_slo(request: Request):
 
     metadata = data['metadata']
     operator = metadata['operator']
+    rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     threshold = float(metadata['threshold'])
     values = data["results"]
     resultLoad = values['second']
@@ -551,7 +652,8 @@ async def check_slo(request: Request):
     isRawLogs = False
 
 
-    if len(data["results"]["first"]) > 2:
+    # if len(data["results"]["first"][0]) > 2:
+    if isinstance(data["results"]["first"], list):
         isStaged = True
         for entry in data["results"]["first"]:
 
@@ -565,11 +667,11 @@ async def check_slo(request: Request):
             if entry["third"]["third"]:
                 if entry["third"]["third"][0]["stream"]:
                     loadLogs.append(entry["third"]["third"][0]["values"])
-                    print("raw logs")
                     isRawLogs = True
                 else:
-                    print("No raw logs")
-                    loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
+                    max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
+                    loadLogs.append(max_value)
+                    # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
     else:
         for entry in data["results"]["first"]["first"]:
 
@@ -580,13 +682,12 @@ async def check_slo(request: Request):
         for entry in data["results"]["first"]["second"]:
             if entry[0]["stream"] != None:
                 loadLogs.append(entry[0]["values"])
-                print("raw logs")
                 isRawLogs = True
 
             else:
-                
-                loadLogs.append(entry[0]["values"][-1][1])
-                print("No raw logs")
+                max_value = max([int(value[1]) for value in entry[0]["values"]])
+                loadLogs.append(max_value)
+                # loadLogs.append(entry[0]["values"][-1][1])
 
 
 
@@ -594,7 +695,7 @@ async def check_slo(request: Request):
         resultWLQ = calcWorkloadLog(loadLogs, metadata)
     else:
         loadLogs = [int(item) for item in loadLogs]
-        resultWLQ = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
+        resultWLQ = (pd.DataFrame(loadLogs).aggregate(rep_aggregation).at[0])
         update_results_data("WLQ_Load", loadLogs)
         update_results_data("WLQ_Load_r", resultWLQ)
 
@@ -842,8 +943,8 @@ async def check_slo(request: Request):
     loadCons = []
     loadLogs = []
 
-    if len(data["results"]["first"]) > 2:
-
+    # if len(data["results"]["first"][0]) > 2:
+    if isinstance(data["results"]["first"], list):
         for entry in data["results"]["first"]:
 
 
@@ -980,8 +1081,8 @@ async def check_slo(request: Request):
     loadCons = []
 
 
-    if len(data["results"]["first"]) > 2:
-
+    # if len(data["results"]["first"]) > 2:
+    if isinstance(data["results"]["first"], list):
         for entry in data["results"]["first"]:
 
 
@@ -993,22 +1094,7 @@ async def check_slo(request: Request):
 
             loadCons.append(entry[0]["values"])
 
-            
 
-
-
-
-         
-
-
-
-
-
-    # values = data["results"]
-
-
-
-    # resultLoad = values['second']
     resultCons = calcConsumption(loadCons, metadata)
 
     result = resultLoad / resultCons
@@ -1138,6 +1224,252 @@ async def check_slo(request: Request):
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
     return check_result(result, operator, threshold)
+
+
+
+
+
+@app.post("/type13/{type_param}",response_model=bool)
+async def check_slo(type_param: int, request: Request):
+    if type_param != 2:
+        type_param = 1
+
+    data = json.loads(await request.body())
+    logger.info('Received request with metadata: %s', data['metadata'])
+    app.state.counter += 1
+
+
+    with open('request_data.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+
+    metadata = data['metadata']
+    operator = metadata['operator']
+    threshold = float(metadata['threshold'])
+    values = data["results"]
+    resultLoad = values['second']
+    gload = resultLoad
+
+    ## dicts in list
+    loadCons = []
+
+    ## lists in list
+    loadLogs = []
+    resultWLQ = 1
+    resultCons = 1
+
+    isStaged = False
+    isRawLogs = False
+
+    
+
+    ## if stagebased, else nonisolated/original
+    # if len(data["results"]["first"]) > 2:
+    if isinstance(data["results"]["first"], list):
+        isStaged = True
+        counter = 0
+        for entry in data["results"]["first"]:
+            mapped_values = {}
+
+            ## load stage cons
+            loadCons_dict = {item[0]: item[1] for item in entry["third"]["second"][0]["values"] }
+
+            loadCons.append(loadCons_dict)
+
+            
+
+            ## load stage logs 
+            if entry["third"]["third"]:
+                if entry["third"]["third"][0]["stream"]:
+                    
+                    for item in entry["third"]["third"][0]["values"]:
+                        timestamp_ns = int(item[0])
+                        timestamp_s = timestamp_ns / 1e9
+
+                        closest_timestamp = min(loadCons[counter], key=lambda t: abs(t - timestamp_s))
+
+                        ## new timestamp to value 
+                        mapped_values[item[1]] = closest_timestamp
+
+
+                    requests_per_timestamp = defaultdict(int)  
+                    for timestamp in mapped_values.values():
+                        requests_per_timestamp[timestamp] += 1
+                    
+                    sorted_requests = sorted([(ts, count) for ts, count in requests_per_timestamp.items()])
+                    loadLogs.append(sorted_requests)
+                    isRawLogs = True
+            counter += 1
+  
+    else:
+        ## cons
+        for entry in data["results"]["first"]["first"]:
+
+            loadCons_dict = {item[0]: item[1] for item in entry[0]["values"] }
+            loadCons.append(loadCons_dict)
+
+         
+            
+        counter = 0
+        ## logs
+        for entry in data["results"]["first"]["second"]:
+            mapped_values = {}
+            if entry[0]["stream"] != None:
+
+                for item in entry[0]["values"]:
+                        timestamp_ns = int(item[0])
+                        timestamp_s = timestamp_ns / 1e9
+
+                        closest_timestamp = min(loadCons[counter], key=lambda t: abs(t - timestamp_s))
+
+                        mapped_values[item[1]] = closest_timestamp
+          
+                        
+                requests_per_timestamp = defaultdict(int)  
+                for timestamp in mapped_values.values():
+                    requests_per_timestamp[timestamp] += 1
+
+
+                sorted_requests = sorted([(ts, count) for ts, count in requests_per_timestamp.items()])
+
+                loadLogs.append(sorted_requests)
+ 
+                isRawLogs = True
+
+
+            counter += 1
+
+                
+    resultEfficiency = calcLogBasedEfficiency(loadCons, loadLogs, type_param, metadata)
+
+
+    save_data_to_json('type13_results.json', {
+        'Efficiency_result': resultEfficiency
+    }, gload)
+
+    save_data_to_json('all_results_data.json', all_results_data, gload)
+    return check_result(resultEfficiency, operator, threshold)
+
+
+
+
+
+
+
+
+
+
+
+
+@app.post("/type14/{type_param}",response_model=bool)
+async def check_slo(type_param: int, request: Request):
+    data = json.loads(await request.body())
+    logger.info('Received request with metadata: %s', data['metadata'])
+    app.state.counter += 1
+
+
+    
+    with open('request_data.json', 'w') as file:
+            json.dump(data, file, indent=4)
+
+
+    metadata = data['metadata']
+    operator = metadata['operator']
+    threshold = float(metadata['threshold'])
+    values = data["results"]
+    resultLoad = values['second']
+    gload = resultLoad
+
+
+    loadCons = []
+    loadLogs = []
+
+    # if len(data["results"]["first"]) > 2:
+    if isinstance(data["results"]["first"], list):
+
+        counter = 0
+        # iterate over repetitions
+        for entry in data["results"]["first"]:
+
+            ## load stage cons
+            loadCons_dict = {item[0]: item[1] for item in entry["third"]["second"][0]["values"] }
+
+            loadCons.append(loadCons_dict)
+
+
+
+
+
+
+
+
+            ## load stage logs
+            if entry["third"]["third"]:
+                # mapped_values = {}
+                mapped_values = defaultdict(float)
+                
+                for item in entry["third"]["third"][0]["values"]:
+                        timestamp_s = int(item[0])
+                        
+                        closest_timestamp = min(loadCons[counter], key=lambda t: abs(t - timestamp_s))
+                        # mapped_values[item[1]] = loadCons_dict[closest_timestamp]
+                        mapped_values[closest_timestamp] += float(item[1])
+
+                mapped_list = list(mapped_values.items())
+                loadLogs.append(mapped_list)
+                counter += 1
+                # loadLogs.append(entry["third"]["third"][0]["values"])
+                
+    else:
+        ## cons
+        for entry in data["results"]["first"]["first"]:
+
+            
+            loadCons_dict = {item[0]: item[1] for item in entry[0]["values"] }
+
+
+            loadCons.append(loadCons_dict)
+            
+
+
+        counter = 0
+        ## logs
+        for entry in data["results"]["first"]["second"]:
+            
+            mapped_values = defaultdict(float)
+
+
+            ## item -> timestamp float [0] + value str/float [1]
+            for item in entry[0]["values"]:
+                timestamp_s = int(item[0])
+                
+                closest_timestamp = min(loadCons[counter], key=lambda t: abs(t - timestamp_s))
+                
+                
+                mapped_values[closest_timestamp] += float(item[1])
+
+
+            
+
+
+            
+            
+            mapped_list = list(mapped_values.items())
+            
+            loadLogs.append(mapped_list)
+            counter += 1
+ 
+
+    result = calcLogBasedEfficiency(loadCons, loadLogs, type_param, metadata)
+
+    logger.info("Efficiency result: %d", result)
+    save_data_to_json('type14_results.json', {
+        'Efficiency_result': result
+    }, gload)
+    save_data_to_json('all_results_data.json', all_results_data, gload)
+    return check_result(result, operator, threshold)
+
+
 
 
 

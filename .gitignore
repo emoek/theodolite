@@ -23,6 +23,8 @@ tmp/
 #/src-gen
 #/test-gen
 
+slo_results/
+
 # IntelliJ
 .idea/
 *.iml

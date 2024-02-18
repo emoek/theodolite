@@ -66,6 +66,7 @@ class SloCheckerFactory {
                                         ?: throw IllegalArgumentException("queryAggregation expected")),
                                 "repetitionAggregation" to (properties["repetitionAggregation"]
                                         ?: throw IllegalArgumentException("repetitionAggregation expected")),
+                                "workloadAggregation" to (properties["workloadAggregation"] ?: "mean"),
                                 "operator" to (properties["operator"] ?: throw IllegalArgumentException("operator expected")),
                                 "threshold" to (properties["threshold"]?.toDoubleOrNull()
                                         ?: properties["thresholdRelToLoad"]?.toDoubleOrNull()?.times(load)

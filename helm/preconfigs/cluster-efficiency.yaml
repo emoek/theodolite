@@ -93,12 +93,16 @@ operator:
 # Prometheus Monitoring Stack (Prometheus Operator)
 ###
 kube-prometheus-stack:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
   global:
     rbac:
       create: true # enable for full-stack monitoring
   
   grafana:
     defaultDashboardsEnabled: false
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5  
 
   kubelet:
     enabled: true
@@ -114,6 +118,7 @@ kube-prometheus-stack:
   
   prometheus:
     enabled: true # Use built-in Prometheus
-
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
 prometheus: 
   enabled: false # Use built-in Prometheus

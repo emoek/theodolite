@@ -92,6 +92,7 @@ strimzi:
 # Prometheus Monitoring Stack (Prometheus Operator)
 ###
 kube-prometheus-stack:
+  nodeSelector: {}
   global:
     rbac:
       create: false # enable for full-stack monitoring

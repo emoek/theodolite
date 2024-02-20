@@ -426,6 +426,7 @@ loki-stack:
   mode: standalone
   nodeSelector: {}
   loki:
+    nodeSelector: {}
     config:
       max_entries_limit_per_query: 1000000  
     config:

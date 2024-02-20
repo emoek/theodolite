@@ -13,6 +13,8 @@ strimzi:
 
 
 kube-prometheus-stack:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
   grafana:
     nodeSelector:
       kubernetes.io/hostname: kube1-5
@@ -27,11 +29,14 @@ prometheus:
 loki-stack:
   nodeSelector:
     kubernetes.io/hostname: kube1-5
+  loki:
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
 
 kepler:
+  enabled: false
   serviceMonitor:
-    namespace:
-      kubernetes.io/hostname: kube1-5
+    namespace: theodolite-stu217492
   extraEnvVars:
     ENABLE_GPU: "false"
 

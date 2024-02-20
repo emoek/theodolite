@@ -120,6 +120,8 @@ kube-prometheus-stack:
    
   kubeStateMetrics:
     enabled: true
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
   
   nodeExporter:
     enabled: true

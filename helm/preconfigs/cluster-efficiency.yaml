@@ -103,7 +103,15 @@ kube-prometheus-stack:
     defaultDashboardsEnabled: false
     nodeSelector:
       kubernetes.io/hostname: kube1-5  
-
+  prometheusOperator:
+    admissionWebhooks:
+      nodeSelector:
+          kubernetes.io/hostname: kube1-5
+      deployment:
+        nodeSelector:
+          kubernetes.io/hostname: kube1-5
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
   kubelet:
     enabled: true
   

@@ -1,0 +1,134 @@
+operator:
+  resultsVolume:
+    enabled: false
+strimzi:
+  enabled: false
+  zookeeper:
+    zooEntrance:
+      enabled: false
+      zookeeperClient:
+        enabled: false
+  schemaRegistry:
+    enabled: false
+
+
+kube-prometheus-stack:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
+  grafana:
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
+  prometheusOperator:
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
+
+prometheus:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
+
+loki-stack:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
+  loki:
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
+
+kepler:
+  enabled: true
+  serviceMonitor:
+    namespace: theodolite-stu217492
+  extraEnvVars:
+    ENABLE_GPU: "false"
+
+
+
+
+
+operator:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
+  sloChecker:
+    lagTrend:
+      enabled: false
+  theodoliteBenchmarks:
+    resourceConfigMaps:
+      uc1LoadGenerator: false
+      uc1Kstreams: false
+      uc1Flink: false
+      uc1BeamFlink: false
+      uc1BeamSamza: false
+      uc2LoadGenerator: false
+      uc2Kstreams: false
+      uc2Flink: false
+      uc2BeamFlink: false
+      uc2BeamSamza: false
+      uc3LoadGenerator: false
+      uc3Kstreams: false
+      uc3Flink: false
+      uc3BeamFlink: false
+      uc3BeamSamza: false
+      uc4LoadGenerator: false
+      uc4Kstreams: false
+      uc4Flink: false
+      uc4BeamFlink: false
+      uc4BeamSamza: false
+    benchmarks:
+      uc1Kstreams: false
+      uc1Flink: false
+      uc1BeamFlink: false
+      uc1BeamSamza: false
+      uc2Kstreams: false
+      uc2Flink: false
+      uc2BeamFlink: false
+      uc2BeamSamza: false
+      uc3Kstreams: false
+      uc3Flink: false
+      uc3BeamFlink: false
+      uc3BeamSamza: false
+      uc4Kstreams: false
+      uc4Flink: false
+      uc4BeamFlink: false
+      uc4BeamSamza: false
+###
+# Prometheus Monitoring Stack (Prometheus Operator)
+###
+kube-prometheus-stack:
+  nodeSelector:
+    kubernetes.io/hostname: kube1-5
+  global:
+    rbac:
+      create: true # enable for full-stack monitoring
+  
+  grafana:
+    defaultDashboardsEnabled: false
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5  
+  prometheusOperator:
+    admissionWebhooks:
+      nodeSelector:
+          kubernetes.io/hostname: kube1-5
+      deployment:
+        nodeSelector:
+          kubernetes.io/hostname: kube1-5
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
+  kubelet:
+    enabled: true
+  
+  kubeDns:
+    enabled: true
+   
+  kubeStateMetrics:
+    enabled: true
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
+  
+  nodeExporter:
+    enabled: true
+  
+  prometheus:
+    enabled: true # Use built-in Prometheus
+    nodeSelector:
+      kubernetes.io/hostname: kube1-5
+prometheus: 
+  enabled: false # Use built-in Prometheus

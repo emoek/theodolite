@@ -34,7 +34,7 @@ loki-stack:
       kubernetes.io/hostname: kube1-1
 
 kepler:
-  enabled: false
+  enabled: true
   serviceMonitor:
     namespace: theodolite-stu217492
   extraEnvVars:
@@ -97,7 +97,7 @@ kube-prometheus-stack:
     kubernetes.io/hostname: kube1-4
   global:
     rbac:
-      create: false # enable for full-stack monitoring
+      create: true # enable for full-stack monitoring
   
   grafana:
     defaultDashboardsEnabled: false
@@ -113,24 +113,22 @@ kube-prometheus-stack:
     nodeSelector:
       kubernetes.io/hostname: kube1-4
   kubelet:
-    enabled: false
+    enabled: true
   
   kubeDns:
-    enabled: false
+    enabled: true
    
   kubeStateMetrics:
-    enabled: false
+    enabled: true
     nodeSelector:
       kubernetes.io/hostname: kube1-1
   
   nodeExporter:
-    enabled: false
+    enabled: true
   
   prometheus:
-    enabled: false # Use built-in Prometheus
+    enabled: true # Use built-in Prometheus
     nodeSelector:
       kubernetes.io/hostname: kube1-4
 prometheus: 
-  enabled: true # Use built-in Prometheus
-  nodeSelector:
-      kubernetes.io/hostname: kube1-4  
+  enabled: false # Use built-in Prometheus

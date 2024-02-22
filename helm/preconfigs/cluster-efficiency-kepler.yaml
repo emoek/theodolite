@@ -97,7 +97,7 @@ kube-prometheus-stack:
     kubernetes.io/hostname: kube1-4
   global:
     rbac:
-      create: true # enable for full-stack monitoring
+      create: false # enable for full-stack monitoring
   
   grafana:
     defaultDashboardsEnabled: false
@@ -113,22 +113,24 @@ kube-prometheus-stack:
     nodeSelector:
       kubernetes.io/hostname: kube1-4
   kubelet:
-    enabled: true
+    enabled: false
   
   kubeDns:
-    enabled: true
+    enabled: false
    
   kubeStateMetrics:
-    enabled: true
+    enabled: false
     nodeSelector:
       kubernetes.io/hostname: kube1-1
   
   nodeExporter:
-    enabled: true
+    enabled: false
   
   prometheus:
-    enabled: true # Use built-in Prometheus
+    enabled: false # Use built-in Prometheus
     nodeSelector:
       kubernetes.io/hostname: kube1-4
 prometheus: 
-  enabled: false # Use built-in Prometheus
+  enabled: true # Use built-in Prometheus
+  nodeSelector:
+      kubernetes.io/hostname: kube1-4  

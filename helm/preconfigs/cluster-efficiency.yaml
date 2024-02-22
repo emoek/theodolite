@@ -14,24 +14,24 @@ strimzi:
 
 kube-prometheus-stack:
   nodeSelector:
-    kubernetes.io/hostname: kube1-5
+    kubernetes.io/hostname: kube1-4
   grafana:
     nodeSelector:
-      kubernetes.io/hostname: kube1-5
+      kubernetes.io/hostname: kube1-1
   prometheusOperator:
     nodeSelector:
-      kubernetes.io/hostname: kube1-5
+      kubernetes.io/hostname: kube1-4
 
 prometheus:
   nodeSelector:
-    kubernetes.io/hostname: kube1-5
+    kubernetes.io/hostname: kube1-4
 
 loki-stack:
   nodeSelector:
-    kubernetes.io/hostname: kube1-5
+    kubernetes.io/hostname: kube1-1
   loki:
     nodeSelector:
-      kubernetes.io/hostname: kube1-5
+      kubernetes.io/hostname: kube1-1
 
 kepler:
   enabled: false
@@ -46,7 +46,7 @@ kepler:
 
 operator:
   nodeSelector:
-    kubernetes.io/hostname: kube1-5
+    kubernetes.io/hostname: kube1-4
   sloChecker:
     lagTrend:
       enabled: false
@@ -94,7 +94,7 @@ operator:
 ###
 kube-prometheus-stack:
   nodeSelector:
-    kubernetes.io/hostname: kube1-5
+    kubernetes.io/hostname: kube1-4
   global:
     rbac:
       create: true # enable for full-stack monitoring
@@ -102,16 +102,16 @@ kube-prometheus-stack:
   grafana:
     defaultDashboardsEnabled: false
     nodeSelector:
-      kubernetes.io/hostname: kube1-5  
+      kubernetes.io/hostname: kube1-1  
   prometheusOperator:
     admissionWebhooks:
       nodeSelector:
-          kubernetes.io/hostname: kube1-5
+          kubernetes.io/hostname: kube1-4
       deployment:
         nodeSelector:
-          kubernetes.io/hostname: kube1-5
+          kubernetes.io/hostname: kube1-4
     nodeSelector:
-      kubernetes.io/hostname: kube1-5
+      kubernetes.io/hostname: kube1-4
   kubelet:
     enabled: true
   
@@ -121,7 +121,7 @@ kube-prometheus-stack:
   kubeStateMetrics:
     enabled: true
     nodeSelector:
-      kubernetes.io/hostname: kube1-5
+      kubernetes.io/hostname: kube1-1
   
   nodeExporter:
     enabled: true
@@ -129,6 +129,6 @@ kube-prometheus-stack:
   prometheus:
     enabled: true # Use built-in Prometheus
     nodeSelector:
-      kubernetes.io/hostname: kube1-5
+      kubernetes.io/hostname: kube1-4
 prometheus: 
   enabled: false # Use built-in Prometheus

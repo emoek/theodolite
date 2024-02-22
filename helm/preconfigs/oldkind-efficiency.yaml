@@ -14,24 +14,24 @@ strimzi:
 
 kube-prometheus-stack:
   nodeSelector:
-    kubernetes.io/hostname: cluster-nodes-worker4
+    kubernetes.io/hostname: cluster-nodes-worker2
   grafana:
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker
+      kubernetes.io/hostname: cluster-nodes-worker2
   prometheusOperator:
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker4
+      kubernetes.io/hostname: cluster-nodes-worker2
 
 prometheus:
   nodeSelector:
-    kubernetes.io/hostname: cluster-nodes-worker4
+    kubernetes.io/hostname: cluster-nodes-worker2
 
 loki-stack:
   nodeSelector:
-    kubernetes.io/hostname: cluster-nodes-worker
+    kubernetes.io/hostname: cluster-nodes-worker3
   loki:
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker
+      kubernetes.io/hostname: cluster-nodes-worker3
 
 kepler:
   enabled: false
@@ -46,7 +46,7 @@ kepler:
 
 operator:
   nodeSelector:
-    kubernetes.io/hostname: cluster-nodes-worker4
+    kubernetes.io/hostname: cluster-nodes-worker2
   sloChecker:
     lagTrend:
       enabled: false
@@ -94,43 +94,41 @@ operator:
 ###
 kube-prometheus-stack:
   nodeSelector:
-    kubernetes.io/hostname: cluster-nodes-worker4
+    kubernetes.io/hostname: cluster-nodes-worker2
   global:
     rbac:
-      create: false # enable for full-stack monitoring
-  
+      create: true # enable for full-stack monitoring
+
   grafana:
     defaultDashboardsEnabled: false
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker
+      kubernetes.io/hostname: cluster-nodes-worker2
   prometheusOperator:
     admissionWebhooks:
       nodeSelector:
-          kubernetes.io/hostname: cluster-nodes-worker4
+          kubernetes.io/hostname: cluster-nodes-worker2
       deployment:
         nodeSelector:
-          kubernetes.io/hostname: cluster-nodes-worker4
+          kubernetes.io/hostname: cluster-nodes-worker2
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker4
+      kubernetes.io/hostname: cluster-nodes-worker2
   kubelet:
-    enabled: false
-  
+    enabled: true
+
   kubeDns:
-    enabled: false
-   
+    enabled: true
+
   kubeStateMetrics:
-    enabled: false
+    enabled: true
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker
-  
+      kubernetes.io/hostname: cluster-nodes-worker2
+
   nodeExporter:
-    enabled: false
-  
+    enabled: true
+
   prometheus:
-    enabled: false # Use built-in Prometheus
+    enabled: true # Use built-in Prometheus
     nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker4
-prometheus: 
-  enabled: true # Use built-in Prometheus
-  nodeSelector:
-      kubernetes.io/hostname: cluster-nodes-worker4
+      kubernetes.io/hostname: cluster-nodes-worker2
+prometheus:
+  enabled: false # Use built-in Prometheus

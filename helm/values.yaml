@@ -232,7 +232,7 @@ operator:
   enabled: true
   
   image: emreoe/theomod
-  imageTag: latest
+  imageTag: 2.5
   imagePullPolicy: Always
 
   nodeSelector: {}

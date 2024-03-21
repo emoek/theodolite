@@ -123,8 +123,7 @@ class NonIsolatedExperimentRunnerImpl(
         var counter = 0
 //        var benchmarkDeployment: BenchmarkDeployment
 
-
-        val start = Instant.now()
+        val resourcesLength = resources.size
 
         val firstLoad = loads[0]
         val firstResource = resources[0]
@@ -132,23 +131,23 @@ class NonIsolatedExperimentRunnerImpl(
         val resources = resources.drop(1)
 
 
-        val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
-                firstLoad,
-                this.loadPatcherDefinitions,
-                firstResource,
-                this.resourcePatcherDefinitions,
-                this.configurationOverrides,
-                this.loadGenerationDelay,
-                this.afterTeardownDelay,
-                this.waitForResourcesEnabled
-        )
-
-        benchmarkDeployment.setup("")
 
 
+        val start = Instant.now()
         loads.zip(resources).forEach { (load, resource) ->
             println("Load: $load, Resource: $resource")
 
+
+            val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
+                    firstLoad,
+                    this.loadPatcherDefinitions,
+                    firstResource,
+                    this.resourcePatcherDefinitions,
+                    this.configurationOverrides,
+                    this.loadGenerationDelay,
+                    this.afterTeardownDelay,
+                    this.waitForResourcesEnabled
+            )
 
 
 
@@ -161,10 +160,16 @@ class NonIsolatedExperimentRunnerImpl(
 //                benchmarkDeployment.setup("")
 
 
+                if (counter != 0) {
+
+                    benchmarkDeployment.setReplicas(resource)
 
 
+                    benchmarkDeployment.setup("generate")
+                } else {
+                    benchmarkDeployment.setup("")
 
-
+                }
 
 
                 this.waitAndLog()
@@ -197,7 +202,14 @@ class NonIsolatedExperimentRunnerImpl(
             }
 
             try {
-                benchmarkDeployment.teardown()
+                counter++
+
+                if (counter == resourcesLength) {
+                    benchmarkDeployment.teardown()
+
+                } else {
+                    benchmarkDeployment.teardownNonApp()
+                }
                 if (mode == ExecutionModes.OPERATOR.value) {
                     eventCreator.createEvent(
                             executionName = executionName,

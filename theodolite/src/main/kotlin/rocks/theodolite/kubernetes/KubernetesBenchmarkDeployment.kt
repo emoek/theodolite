@@ -82,6 +82,8 @@ class KubernetesBenchmarkDeployment(
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             rolloutManager.rollout(loadGenResources)
         } else if (stage == "generate") {
+            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
+            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
             loadGenBeforeActions.forEach { it.exec(client = client) }
 //            logger.info { "Wait ${this.loadGenerationDelay} seconds before starting the load generator." }
 //            Thread.sleep(Duration.ofSeconds(this.loadGenerationDelay).toMillis())
@@ -107,6 +109,11 @@ class KubernetesBenchmarkDeployment(
 
 
 
+    }
+
+    override fun setReplicas(resource: Int) {
+        val rolloutManager = RolloutManager(rolloutMode, client)
+        rolloutManager.rolloutReplicas(appResources, resource)
     }
 
 
@@ -185,6 +192,43 @@ class KubernetesBenchmarkDeployment(
         }
 
         listOf(loadGenResources, appResources)
+                .forEach {
+                    if (it is Deployment) {
+                        podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)
+                    } else if (it is StatefulSet) {
+                        podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)
+                    }
+                }
+
+        podCleaner.removePods(
+                labelName = LAG_EXPORTER_POD_LABEL_NAME,
+                labelValue = LAG_EXPORTER_POD_LABEL_VALUE
+        )
+        logger.info { "Teardown complete. Wait $afterTeardownDelay seconds to let everything cool down." }
+        Thread.sleep(Duration.ofSeconds(afterTeardownDelay).toMillis())
+    }
+
+
+
+
+    /**
+     * Tears down a [KubernetesBenchmark]:
+     *  - Reset the Kafka Lag Exporter.
+     *  - Remove the used topics.
+     *  - Remove the [KubernetesResource]s (removal order: loadgenerator resources, SUT resources;
+     *    No guaranteed order of files inside configmaps).
+     */
+    override fun teardownNonApp() {
+        val podCleaner = ResourceByLabelHandler(client)
+        loadGenResources.reversed().forEach { kubernetesManager.remove(it, false) }
+        loadGenAfterActions.forEach { it.exec(client = client) }
+//        appResources.reversed().forEach { kubernetesManager.remove(it,false) }
+//        sutAfterActions.forEach { it.exec(client = client) }
+        if (this.topics.isNotEmpty()) {
+            kafkaController.removeTopics(this.topics.map { topic -> topic.name })
+        }
+
+        listOf(loadGenResources)
                 .forEach {
                     if (it is Deployment) {
                         podCleaner.blockUntilPodsDeleted(it.spec.selector.matchLabels)

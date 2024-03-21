@@ -20,4 +20,8 @@ interface BenchmarkDeployment {
      *  resources and to reset the used infrastructure.
      */
     fun teardown()
+
+    fun teardownNonApp()
+
+    fun setReplicas(resource: Int)
 }

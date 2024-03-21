@@ -120,31 +120,48 @@ class NonIsolatedExperimentRunnerImpl(
 
 
     private fun runSingleExperiment(loads: List<Int>, resources: List<Int>): Pair<Instant, Instant> {
+        var counter = 0
+//        var benchmarkDeployment: BenchmarkDeployment
+
 
         val start = Instant.now()
+
+        val firstLoad = loads[0]
+        val firstResource = resources[0]
+        val loads = loads.drop(1)
+        val resources = resources.drop(1)
+
+
+        val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
+                firstLoad,
+                this.loadPatcherDefinitions,
+                firstResource,
+                this.resourcePatcherDefinitions,
+                this.configurationOverrides,
+                this.loadGenerationDelay,
+                this.afterTeardownDelay,
+                this.waitForResourcesEnabled
+        )
+
+        benchmarkDeployment.setup("")
+
 
         loads.zip(resources).forEach { (load, resource) ->
             println("Load: $load, Resource: $resource")
 
 
-            val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
-                    load,
-                    this.loadPatcherDefinitions,
-                    resource,
-                    this.resourcePatcherDefinitions,
-                    this.configurationOverrides,
-                    this.loadGenerationDelay,
-                    this.afterTeardownDelay,
-                    this.waitForResourcesEnabled
-            )
+
+
+
+
 
 
 
             try {
+//                benchmarkDeployment.setup("")
 
 
 
-                benchmarkDeployment.setup("")
 
 
 

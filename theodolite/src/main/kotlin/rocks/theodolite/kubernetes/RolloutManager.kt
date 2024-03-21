@@ -30,7 +30,39 @@ class RolloutManager(private val blockUntilResourcesReady: Boolean, private val 
         }
     }
 
-    private fun waitFor(isResourceReady: () -> Boolean) {
+    fun rollout(resources: List<HasMetadata>, desiredReplicas: Map<String, Int>) {
+        resources.forEach{resource ->
+            when(resource) {
+                is Deployment -> {
+                    val currentDeployment = client.apps().deployments().withName(resource.metadata.name).get()
+                    val currentReplicas = currentDeployment.spec.replicas ?: 1
+                    val newReplicas = desiredReplicas[resource.metadata.name] ?: currentReplicas
+                    if (newReplicas != currentReplicas) {
+                        val deployment = client.apps().deployments().withName(resource.metadata.name).edit()
+                        deployment.spec.replicas = newReplicas
+                        client.apps().deployments().createOrReplace(deployment)
+//                        client.apps().deployments().withName(resource.metadata.name)
+//                                .edit().editSpec().withReplicas(newReplicas).endSpec().done()
+                    }
+                }
+                is StatefulSet -> {
+                    val currentStatefulSet = client.apps().statefulSets().withName(resource.metadata.name).get()
+                    val currentReplicas = currentStatefulSet.spec.replicas ?: 1
+                    val newReplicas = desiredReplicas[resource.metadata.name] ?: currentReplicas
+                    if (newReplicas != currentReplicas) {
+                        val deployment = client.apps().statefulSets().withName(resource.metadata.name).edit()
+                        deployment.spec.replicas = newReplicas
+                        client.apps().statefulSets().createOrReplace(deployment)
+//                        client.apps().statefulSets().withName(resource.metadata.name)
+//                                .edit().editSpec().withReplicas(newReplicas).endSpec().done()
+                    }
+                }
+            }
+
+        }
+    }
+
+        private fun waitFor(isResourceReady: () -> Boolean) {
         while (!isResourceReady()) {
             Thread.sleep(SLEEP_TIME_MS)
         }

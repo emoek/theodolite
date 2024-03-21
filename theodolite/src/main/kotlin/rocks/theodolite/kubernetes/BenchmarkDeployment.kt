@@ -20,4 +20,10 @@ interface BenchmarkDeployment {
      *  resources and to reset the used infrastructure.
      */
     fun teardown()
+
+    /**
+     *  Tears down a benchmark. This method is responsible for deleting the deployed
+     *  resources and to reset the used infrastructure.
+     */
+    fun teardownNonResources()
 }

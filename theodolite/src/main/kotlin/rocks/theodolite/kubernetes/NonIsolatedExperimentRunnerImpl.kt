@@ -120,12 +120,13 @@ class NonIsolatedExperimentRunnerImpl(
 
 
     private fun runSingleExperiment(loads: List<Int>, resources: List<Int>): Pair<Instant, Instant> {
-
+        val lengthResources = resources.size
+        var counter = 0
         val start = Instant.now()
-
+        var benchmarkDeployment : BenchmarkDeployment
         loads.zip(resources).forEach { (load, resource) ->
             println("Load: $load, Resource: $resource")
-
+            counter++
 
             val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
                     load,
@@ -179,8 +180,14 @@ class NonIsolatedExperimentRunnerImpl(
                 throw ExecutionFailedException("Error during setup the experiment", e)
             }
 
+
             try {
-                benchmarkDeployment.teardown()
+                if (counter == lengthResources) {
+                    benchmarkDeployment.teardown()
+                } else {
+                    benchmarkDeployment.teardownNonResources()
+                }
+//                benchmarkDeployment.teardown()
                 if (mode == ExecutionModes.OPERATOR.value) {
                     eventCreator.createEvent(
                             executionName = executionName,
@@ -200,6 +207,7 @@ class NonIsolatedExperimentRunnerImpl(
                 }
                 throw ExecutionFailedException("Error during teardown the experiment", e)
             }
+//            counter++
 
         }
 

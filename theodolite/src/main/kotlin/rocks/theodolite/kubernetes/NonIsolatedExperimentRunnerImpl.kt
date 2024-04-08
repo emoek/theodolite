@@ -123,25 +123,25 @@ class NonIsolatedExperimentRunnerImpl(
         val lengthResources = resources.size
         var counter = 0
         val start = Instant.now()
-        var benchmarkDeployment : BenchmarkDeployment
+//        var benchmarkDeployment : BenchmarkDeployment
         loads.zip(resources).forEach { (load, resource) ->
-            println("Load: $load, Resource: $resource")
-            counter++
-
-            val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
-                    load,
-                    this.loadPatcherDefinitions,
-                    resource,
-                    this.resourcePatcherDefinitions,
-                    this.configurationOverrides,
-                    this.loadGenerationDelay,
-                    this.afterTeardownDelay,
-                    this.waitForResourcesEnabled
-            )
-
 
 
             try {
+                println("Load: $load, Resource: $resource")
+                counter++
+
+                val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
+                        load,
+                        this.loadPatcherDefinitions,
+                        resource,
+                        this.resourcePatcherDefinitions,
+                        this.configurationOverrides,
+                        this.loadGenerationDelay,
+                        this.afterTeardownDelay,
+                        this.waitForResourcesEnabled
+                )
+//            try {
 
 
 
@@ -165,6 +165,32 @@ class NonIsolatedExperimentRunnerImpl(
                     )
                 }
 
+                try {
+                    if (counter == lengthResources) {
+                        benchmarkDeployment.teardown()
+                    } else {
+                        benchmarkDeployment.teardownNonResources()
+                    }
+//                benchmarkDeployment.teardown()
+                    if (mode == ExecutionModes.OPERATOR.value) {
+                        eventCreator.createEvent(
+                                executionName = executionName,
+                                type = "NORMAL",
+                                reason = "Stop experiment",
+                                message = "Teardown complete"
+                        )
+                    }
+                } catch (e: Exception) {
+                    if (mode == ExecutionModes.OPERATOR.value) {
+                        eventCreator.createEvent(
+                                executionName = executionName,
+                                type = "WARNING",
+                                reason = "Stop experiment failed",
+                                message = "Teardown failed: ${e.message}"
+                        )
+                    }
+                    throw ExecutionFailedException("Error during teardown the experiment", e)
+                }
 
             } catch (e: Exception) {
                 this.run.set(false)
@@ -181,32 +207,35 @@ class NonIsolatedExperimentRunnerImpl(
             }
 
 
-            try {
-                if (counter == lengthResources) {
-                    benchmarkDeployment.teardown()
-                } else {
-                    benchmarkDeployment.teardownNonResources()
-                }
-//                benchmarkDeployment.teardown()
-                if (mode == ExecutionModes.OPERATOR.value) {
-                    eventCreator.createEvent(
-                            executionName = executionName,
-                            type = "NORMAL",
-                            reason = "Stop experiment",
-                            message = "Teardown complete"
-                    )
-                }
-            } catch (e: Exception) {
-                if (mode == ExecutionModes.OPERATOR.value) {
-                    eventCreator.createEvent(
-                            executionName = executionName,
-                            type = "WARNING",
-                            reason = "Stop experiment failed",
-                            message = "Teardown failed: ${e.message}"
-                    )
-                }
-                throw ExecutionFailedException("Error during teardown the experiment", e)
-            }
+
+
+
+//            try {
+//                if (counter == lengthResources) {
+//                    benchmarkDeployment.teardown()
+//                } else {
+//                    benchmarkDeployment.teardownNonResources()
+//                }
+////                benchmarkDeployment.teardown()
+//                if (mode == ExecutionModes.OPERATOR.value) {
+//                    eventCreator.createEvent(
+//                            executionName = executionName,
+//                            type = "NORMAL",
+//                            reason = "Stop experiment",
+//                            message = "Teardown complete"
+//                    )
+//                }
+//            } catch (e: Exception) {
+//                if (mode == ExecutionModes.OPERATOR.value) {
+//                    eventCreator.createEvent(
+//                            executionName = executionName,
+//                            type = "WARNING",
+//                            reason = "Stop experiment failed",
+//                            message = "Teardown failed: ${e.message}"
+//                    )
+//                }
+//                throw ExecutionFailedException("Error during teardown the experiment", e)
+//            }
 //            counter++
 
         }

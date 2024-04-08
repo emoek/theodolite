@@ -124,11 +124,11 @@ class NonIsolatedExperimentRunnerImpl(
         var counter = 0
         val start = Instant.now()
 //        var benchmarkDeployment : BenchmarkDeployment
-        println(loads)
-        println(resources)
+        println("Loads:$loads")
+        println("Resources:$resources")
         loads.zip(resources).forEach { (load, resource) ->
-            println(load)
-            println(resource)
+            println("Load:$load")
+            println("Resource: $resource")
 
 
             try {

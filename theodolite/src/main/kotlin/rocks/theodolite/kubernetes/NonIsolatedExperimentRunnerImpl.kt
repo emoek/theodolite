@@ -126,9 +126,14 @@ class NonIsolatedExperimentRunnerImpl(
 //        var benchmarkDeployment : BenchmarkDeployment
         println("Loads:$loads")
         println("Resources:$resources")
+        logger.info { "TEST" }
+        logger.info { "Loads:$loads"  }
+        logger.info { "Resources:$resources"  }
         loads.zip(resources).forEach { (load, resource) ->
             println("Load:$load")
+            logger.info { "Load:$load"  }
             println("Resource: $resource")
+            logger.info { "Resource: $resource"  }
 
 
             try {

@@ -124,7 +124,11 @@ class NonIsolatedExperimentRunnerImpl(
         var counter = 0
         val start = Instant.now()
 //        var benchmarkDeployment : BenchmarkDeployment
+        println(loads)
+        println(resources)
         loads.zip(resources).forEach { (load, resource) ->
+            println(load)
+            println(resource)
 
 
             try {
@@ -166,6 +170,7 @@ class NonIsolatedExperimentRunnerImpl(
                 }
 
                 try {
+                    println(counter)
                     if (counter == lengthResources) {
                         benchmarkDeployment.teardown()
                     } else {

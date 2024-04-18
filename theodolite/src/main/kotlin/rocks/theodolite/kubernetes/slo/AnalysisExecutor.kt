@@ -228,6 +228,9 @@ class AnalysisExecutor(
                         )
                     }
 
+            if (prometheusData.isEmpty()) {
+                throw NoSuchFieldException("The prometheus query did not provide any result for the query.")
+            }
 
             var lokiData = listOf<LokiResponse>()
             var workloadData = listOf<PrometheusResponse>()
@@ -250,6 +253,7 @@ class AnalysisExecutor(
 
 
 
+
                 } else {
 
                     workloadData = executionIntervals
@@ -261,6 +265,8 @@ class AnalysisExecutor(
                                         query = workload
                                 )
                             }
+
+
 
 
 

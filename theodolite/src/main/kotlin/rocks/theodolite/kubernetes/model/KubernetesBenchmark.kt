@@ -1,5 +1,6 @@
 package rocks.theodolite.kubernetes.model
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import io.fabric8.kubernetes.api.model.KubernetesResource
 import io.quarkus.runtime.annotations.RegisterForReflection
@@ -26,6 +27,7 @@ import kotlin.properties.Delegates
  * @constructor construct an empty Benchmark.
  */
 @JsonDeserialize
+@JsonIgnoreProperties(ignoreUnknown = true)
 @RegisterForReflection
 class KubernetesBenchmark : KubernetesResource {
     lateinit var name: String

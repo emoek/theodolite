@@ -83,8 +83,6 @@ def check_result(result, operator: str, threshold):
         raise ValueError('Invalid operator string.')
     
 
-# global count 
-# count = 0
 
 
 global gload 
@@ -92,9 +90,12 @@ gload = 0
 all_results_data = {}
 def update_results_data(type_key, data):
     all_results_data[type_key] = data
-    # Optionally, save each update to disk
 
 
+''' 
+Calculate "useful consumption" by making use of base+load stages.
+Only applicable for Stage-Based Experiment Runner
+'''
 def calcStagedConsumption(baseConsData, loadConsData, metadata):
     
     warmup = int(metadata['warmup'])
@@ -123,13 +124,17 @@ def calcStagedConsumption(baseConsData, loadConsData, metadata):
     return result
 
 
+''' 
+Provides the consumption.
+Load stage in case of Stage-Based Experiment Runner.
+Applicable for all Experiment Runner.
+'''
 def calcConsumption(loadConsData, metadata):
     
     warmup = int(metadata['warmup'])
     query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
-    # operator = metadata['operator']
-    # threshold = float(metadata['threshold'])
+  
 
     loadConsQueryResults = [aggr_query(r, warmup, query_aggregation) for r in loadConsData]
     logger.info("C Load: %d", loadConsQueryResults)
@@ -142,16 +147,18 @@ def calcConsumption(loadConsData, metadata):
 
     return result
 
-
+''' 
+Calculate "useful workload" by making use of idle+base stages.
+Only applicable for Stage-Based Experiment Runner.
+Uses Metrics (Prometheus) as source.
+'''
 def calcStagedWorkloadMetric(idleWorkloadData, loadWorkloadData, metadata):
     
     warmup = int(metadata['warmup'])
-    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     query_aggregation = get_aggr_func(metadata['workloadAggregation'])
 
-    # operator = metadata['operator']
-    # threshold = float(metadata['threshold'])
+
 
     idleWMQueryResults = [aggr_query(r, warmup, query_aggregation) for r in idleWorkloadData]
     loadWMQueryResults = [aggr_query(r, warmup, query_aggregation) for r in loadWorkloadData]
@@ -170,15 +177,18 @@ def calcStagedWorkloadMetric(idleWorkloadData, loadWorkloadData, metadata):
 
     return result
 
-
+''' 
+Provides the workload.
+Load stage in case of Stage-Based Experiment Runner.
+Applicable for all Experiment Runner.
+Uses Metrics (Prometheus) as source.
+'''
 def calcWorkloadMetric(loadWorkloadData, metadata):
     
     warmup = int(metadata['warmup'])
-    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     query_aggregation = get_aggr_func(metadata['workloadAggregation'])
-    # operator = metadata['operator']
-    # threshold = float(metadata['threshold'])
+
 
     loadWMQueryResults = [aggr_query(r, warmup, query_aggregation) for r in loadWorkloadData]
     logger.info("WMQ Load: %d", loadWMQueryResults)
@@ -191,11 +201,14 @@ def calcWorkloadMetric(loadWorkloadData, metadata):
 
     return result
 
-
+''' 
+Calculate "useful workload" by making use of idle+base stages.
+Only applicable for Stage-Based Experiment Runner.
+Uses Logs (Loki) as source.
+'''
 def calcStagedWorkloadLog(idleWorkloadData, loadWorkloadData, metadata):
     
 
-    query_aggregation = get_aggr_func(metadata['workloadAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     nrIdleLogs = [len(r) for r in idleWorkloadData]
 
@@ -206,7 +219,6 @@ def calcStagedWorkloadLog(idleWorkloadData, loadWorkloadData, metadata):
     update_results_data("WLQ_Load", nrLoadLogs)
 
     logIdleResult = pd.DataFrame(nrIdleLogs).aggregate(rep_aggregation).at[0]
-    # logLoadResult = pd.DataFrame(nrLoadLogs).aggregate('mean').at[0]
     logLoadResult = pd.DataFrame(nrLoadLogs).aggregate(rep_aggregation).at[0]
 
     logger.info("WLQ Idle over repetitions: %d", logIdleResult)
@@ -219,16 +231,17 @@ def calcStagedWorkloadLog(idleWorkloadData, loadWorkloadData, metadata):
 
     return result
 
-
+''' 
+Provides the workload.
+Load stage in case of Stage-Based Experiment Runner.
+Applicable for all Experiment Runner.
+Uses Logs (Loki) as source.
+'''
 def calcWorkloadLog(loadWorkloadData, metadata):
-    warmup = int(metadata['warmup'])
-    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
 
-    query_aggregation = get_aggr_func(metadata['workloadAggregation'])
 
 
-    # maxLoadLogTest = [aggr_query(r, warmup, "max") for r in loadWorkloadData]
 
    
     nrLoadLogs = [len(r) for r in loadWorkloadData]
@@ -248,11 +261,14 @@ def calcWorkloadLog(loadWorkloadData, metadata):
 
 
 
-
+''' 
+Provides the Efficiency Ratio.
+Applicable for all Experiment Runner.
+Uses Logs (Loki) as source.
+Interesting when using Throughput as Performance parameter.
+'''
 def calcLogBasedEfficiency(loadCons, loadLogs, type_param, metadata):
     
-    warmup = int(metadata['warmup'])
-    # query_aggregation = get_aggr_func(metadata['queryAggregation'])
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     total_results = []
     final_result = 0
@@ -292,13 +308,12 @@ def calcLogBasedEfficiency(loadCons, loadLogs, type_param, metadata):
             total_results.append(geomean)
         
     
-    # final_result = np.mean(total_results)
     final_result = pd.DataFrame(total_results).aggregate(rep_aggregation).at[0]
     logger.info("Efficiency Ratio Results: %d", total_results)
-    update_results_data("ERR", total_results)
+    update_results_data("ER", total_results)
 
     logger.info("Efficiency Ratio Results over repetitions: %d", final_result)
-    update_results_data("ERR_r", final_result)
+    update_results_data("ER_r", final_result)
 
 
 
@@ -321,7 +336,10 @@ def calcLogBasedEfficiency(loadCons, loadLogs, type_param, metadata):
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Workload" and "Useful Consumption" extraction.
+Using Logs as Workload.
+'''
 @app.post("/type1",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -362,7 +380,7 @@ async def check_slo(request: Request):
 
 
 
-        
+        # Extract log values of idle stage if present
         if entry["second"]["third"]:
             if entry["second"]["third"][0]["stream"] != None:
                 isRawLogs = True 
@@ -370,7 +388,7 @@ async def check_slo(request: Request):
             else:
                 idleLogs.append(entry["second"]["third"][0]["values"][-1][1])
 
-        # Extract log values if present
+        # Extract log values of load stage if present
         if entry["third"]["third"]:
             if entry["third"]["third"][0]["stream"] != None:
                 isRawLogs = True 
@@ -380,21 +398,20 @@ async def check_slo(request: Request):
             else:
                 max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
                 loadLogs.append(max_value)
-                # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
 
-
-
+    # Calculate Workload
+    # If Raw Logs provided from query use method
     if isRawLogs:
         resultWLQ = calcStagedWorkloadLog(idleLogs, loadLogs, metadata)
     else:
+        # if aggregated logs query
         idleLogs = [int(item) for item in idleLogs]
 
         loadLogs = [int(item) for item in loadLogs]
 
         idleLogs_r = (pd.DataFrame(idleLogs).aggregate(rep_aggregation).at[0])
-        # loadLogs_r = (pd.DataFrame(loadLogs).aggregate('mean').at[0])
         loadLogs_r = (pd.DataFrame(loadLogs).aggregate(rep_aggregation).at[0])
 
 
@@ -410,24 +427,25 @@ async def check_slo(request: Request):
 
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
+    # Calculate Consumption
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
+    # Calculate Average Efficiency
     result = resultWLQ / resultCons
 
 
     logger.info("WLQ result: %d", resultWLQ)
     logger.info("C result: %d", resultCons)
-    logger.info("Efficiency result: %d", result)
+    logger.info("AE result: %d", result)
 
     save_data_to_json('type1_results.json', {
         'WLQ_result': resultWLQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
 
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
@@ -436,7 +454,10 @@ async def check_slo(request: Request):
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Workload" extraction.
+Using Logs as Workload.
+'''
 @app.post("/type2",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -491,7 +512,6 @@ async def check_slo(request: Request):
 
                 max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
                 loadLogs.append(max_value)
-                # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
     if isRawLogs:
@@ -511,8 +531,6 @@ async def check_slo(request: Request):
         update_results_data("WLQ_Load_r", loadLogs_r)
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
     resultCons = calcConsumption(loadCons, metadata)
 
     result = resultWLQ / resultCons
@@ -524,17 +542,21 @@ async def check_slo(request: Request):
     save_data_to_json('type2_results.json', {
         'WLQ_result': resultWLQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
 
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Consumption" extraction.
+Using Logs as Workload.
+'''
 @app.post("/type3",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -549,7 +571,6 @@ async def check_slo(request: Request):
     metadata = data['metadata']
     rep_aggregation = get_aggr_func(metadata['repetitionAggregation'])
     operator = metadata['operator']
-    warmup = metadata['warmup']
     threshold = float(metadata['threshold'])
     values = data["results"]
     resultLoad = values['second']
@@ -582,7 +603,6 @@ async def check_slo(request: Request):
                 max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
                 loadLogs.append(max_value)
                 
-                # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
 
 
 
@@ -598,8 +618,7 @@ async def check_slo(request: Request):
         update_results_data("WLQ_Load_r", resultWLQ)
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
+
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
     result = resultWLQ / resultCons
@@ -610,9 +629,10 @@ async def check_slo(request: Request):
     save_data_to_json('type3_results.json', {
         'WLQ_result': resultWLQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
@@ -622,7 +642,11 @@ async def check_slo(request: Request):
 
 
 
-
+''' 
+Provides "Average Efficiency".
+Using Logs as Workload.
+For the case of Stage-Based Experiment Runner only Load stage values are used.
+'''
 @app.post("/type4",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -652,7 +676,6 @@ async def check_slo(request: Request):
     isRawLogs = False
 
 
-    # if len(data["results"]["first"][0]) > 2:
     if isinstance(data["results"]["first"], list):
         isStaged = True
         for entry in data["results"]["first"]:
@@ -671,7 +694,6 @@ async def check_slo(request: Request):
                 else:
                     max_value = max([int(value[1]) for value in entry["third"]["third"][0]["values"]])
                     loadLogs.append(max_value)
-                    # loadLogs.append(entry["third"]["third"][0]["values"][-1][1])
     else:
         for entry in data["results"]["first"]["first"]:
 
@@ -687,7 +709,6 @@ async def check_slo(request: Request):
             else:
                 max_value = max([int(value[1]) for value in entry[0]["values"]])
                 loadLogs.append(max_value)
-                # loadLogs.append(entry[0]["values"][-1][1])
 
 
 
@@ -700,8 +721,6 @@ async def check_slo(request: Request):
         update_results_data("WLQ_Load_r", resultWLQ)
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
     resultCons = calcConsumption(loadCons, metadata)
 
     result = resultWLQ / resultCons
@@ -712,10 +731,11 @@ async def check_slo(request: Request):
     save_data_to_json('type4_results.json', {
         'WLQ_result': resultWLQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'AE_result': result
     }, gload)
 
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
@@ -724,7 +744,10 @@ async def check_slo(request: Request):
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Workload" and "Useful Consumption" extraction.
+Using Metrics as Workload.
+'''
 @app.post("/type5",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -768,8 +791,6 @@ async def check_slo(request: Request):
 
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
     resultWMQ = calcStagedWorkloadMetric(idleLogs, loadLogs, metadata)
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
@@ -782,9 +803,10 @@ async def check_slo(request: Request):
     save_data_to_json('type5_results.json', {
         'WMQ_result': resultWMQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
@@ -794,7 +816,10 @@ async def check_slo(request: Request):
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Workload" extraction.
+Using Metrics as Workload.
+'''
 @app.post("/type6",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -836,8 +861,6 @@ async def check_slo(request: Request):
         if entry["third"]["third"]:
             loadLogs.append(entry["third"]["third"][0]["values"])
 
-    # values = data["results"]
-    # resultLoad = values['second']
     resultWMQ = calcStagedWorkloadMetric(idleLogs, loadLogs, metadata)
     resultCons = calcConsumption(loadCons, metadata)
 
@@ -850,15 +873,19 @@ async def check_slo(request: Request):
     save_data_to_json('type6_results.json', {
         'WMQ_result': resultWMQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Consumption" extraction.
+Using Metrics as Workload.
+'''
 @app.post("/type7",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -898,8 +925,6 @@ async def check_slo(request: Request):
 
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
     resultWMQ = calcWorkloadMetric(loadLogs, metadata)
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
@@ -912,15 +937,20 @@ async def check_slo(request: Request):
     save_data_to_json('type7_results.json', {
         'WMQ_result': resultWMQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
-
+''' 
+Provides "Average Efficiency".
+Using Logs as Workload.
+Using only Load stage values in case of the Stage-Based Experiment Runner.
+'''
 @app.post("/type8",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -943,7 +973,6 @@ async def check_slo(request: Request):
     loadCons = []
     loadLogs = []
 
-    # if len(data["results"]["first"][0]) > 2:
     if isinstance(data["results"]["first"], list):
         for entry in data["results"]["first"]:
 
@@ -969,9 +998,7 @@ async def check_slo(request: Request):
 
             loadLogs.append(entry[0]["values"])
         
-    # values = data["results"]
-
-    # resultLoad = values['second']
+   
     resultWMQ = calcWorkloadMetric(loadLogs, metadata)
     resultCons = calcConsumption(loadCons, metadata)
 
@@ -984,9 +1011,10 @@ async def check_slo(request: Request):
     save_data_to_json('type8_results.json', {
         'WMQ_result': resultWMQ,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'AE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
@@ -994,7 +1022,10 @@ async def check_slo(request: Request):
 
 
 
-
+''' 
+Provides "Staged Average Efficiency" with "Useful Consumption" extraction.
+Using "load" from benchmark execution as Workload.
+'''
 @app.post("/type9",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -1032,12 +1063,9 @@ async def check_slo(request: Request):
 
 
 
-    # values = data["results"]
 
 
 
-
-    # resultLoad = values['second']
     resultCons = calcStagedConsumption(baseCons, loadCons, metadata)
 
     result = resultLoad / resultCons
@@ -1049,15 +1077,19 @@ async def check_slo(request: Request):
     save_data_to_json('type9_results.json', {
         'Load': resultLoad,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'SAE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, resultLoad)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
-
+''' 
+Provides "Average Efficiency".
+Using "load" from benchmark execution as Workload.
+'''
 @app.post("/type10",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -1081,7 +1113,6 @@ async def check_slo(request: Request):
     loadCons = []
 
 
-    # if len(data["results"]["first"]) > 2:
     if isinstance(data["results"]["first"], list):
         for entry in data["results"]["first"]:
 
@@ -1105,16 +1136,21 @@ async def check_slo(request: Request):
     save_data_to_json('type10_results.json', {
         'Load': resultLoad,
         'C_result': resultCons,
-        'Efficiency_result': result
+        'AE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
 
-
+''' 
+Provides "Stage-Based Efficiency".
+Only applicable when using Stage-Based Experiment Runner.
+Uses Base+Load Stages.
+'''
 @app.post("/type11",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -1147,8 +1183,7 @@ async def check_slo(request: Request):
         loadCons.append(entry["third"]["second"][0]["values"])
 
 
-    # values = data["results"]
-    # resultLoad = values['second']
+ 
 
     resultBaseCons = calcConsumption(baseCons, metadata)
     resultLoadCons = calcConsumption(loadCons, metadata)
@@ -1163,9 +1198,10 @@ async def check_slo(request: Request):
     save_data_to_json('type11_results.json', {
         'C_Base_result': resultBaseCons,
         'C_Load_result': resultLoadCons,
-        'Efficiency_result': result
+        'SBE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
@@ -1174,7 +1210,11 @@ async def check_slo(request: Request):
 
 
 
-
+''' 
+Provides "Stage-Based Efficiency".
+Only applicable when using Stage-Based Experiment Runner.
+Uses Idle+Load Stages.
+'''
 @app.post("/type12",response_model=bool)
 async def check_slo(request: Request):
     data = json.loads(await request.body())
@@ -1206,8 +1246,6 @@ async def check_slo(request: Request):
 
         loadCons.append(entry["third"]["second"][0]["values"])
 
-    # values = data["results"]
-    # resultLoad = values['second']
 
     resultIdleCons = calcConsumption(idleCons, metadata)
     resultLoadCons = calcConsumption(loadCons, metadata)
@@ -1220,15 +1258,21 @@ async def check_slo(request: Request):
     save_data_to_json('type12_results.json', {
         'C_Idle_result': resultIdleCons,
         'C_Load_result': resultLoadCons,
-        'Efficiency_result': result
+        'SBE_result': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
-
+''' 
+Provides "Efficiency Ratio".
+Only applicable when using original Theodolite or Non-Isolated Experiment Runner.
+Uses Logs (Loki) for Workload.
+When type_param equals "1" use only consumption when workload occurs, otherwise "2"
+'''
 @app.post("/type13/{type_param}",response_model=bool)
 async def check_slo(type_param: int, request: Request):
     if type_param != 2:
@@ -1255,18 +1299,12 @@ async def check_slo(type_param: int, request: Request):
 
     ## lists in list
     loadLogs = []
-    resultWLQ = 1
-    resultCons = 1
-
-    isStaged = False
-    isRawLogs = False
+ 
 
     
 
-    ## if stagebased, else nonisolated/original
-    # if len(data["results"]["first"]) > 2:
     if isinstance(data["results"]["first"], list):
-        isStaged = True
+      
         counter = 0
         for entry in data["results"]["first"]:
             mapped_values = {}
@@ -1278,7 +1316,7 @@ async def check_slo(type_param: int, request: Request):
 
             
 
-            ## load stage logs 
+            ## load stage workload 
             if entry["third"]["third"]:
                 if entry["third"]["third"][0]["stream"]:
                     
@@ -1298,7 +1336,7 @@ async def check_slo(type_param: int, request: Request):
                     
                     sorted_requests = sorted([(ts, count) for ts, count in requests_per_timestamp.items()])
                     loadLogs.append(sorted_requests)
-                    isRawLogs = True
+                    
             counter += 1
   
     else:
@@ -1311,7 +1349,7 @@ async def check_slo(type_param: int, request: Request):
          
             
         counter = 0
-        ## logs
+        ## workload
         for entry in data["results"]["first"]["second"]:
             mapped_values = {}
             if entry[0]["stream"] != None:
@@ -1334,7 +1372,7 @@ async def check_slo(type_param: int, request: Request):
 
                 loadLogs.append(sorted_requests)
  
-                isRawLogs = True
+             
 
 
             counter += 1
@@ -1344,10 +1382,11 @@ async def check_slo(type_param: int, request: Request):
 
 
     save_data_to_json('type13_results.json', {
-        'Efficiency_result': resultEfficiency
+        'ER': resultEfficiency
     }, gload)
 
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(resultEfficiency, operator, threshold)
 
 
@@ -1360,7 +1399,12 @@ async def check_slo(type_param: int, request: Request):
 
 
 
-
+''' 
+Provides "Efficiency Ratio".
+Only applicable when using original Theodolite or Non-Isolated Experiment Runner.
+Uses Metrics (Prometheus) for Workload.
+When type_param equals "1" use all consumption, otherwise "2"
+'''
 @app.post("/type14/{type_param}",response_model=bool)
 async def check_slo(type_param: int, request: Request):
     data = json.loads(await request.body())
@@ -1384,7 +1428,6 @@ async def check_slo(type_param: int, request: Request):
     loadCons = []
     loadLogs = []
 
-    # if len(data["results"]["first"]) > 2:
     if isinstance(data["results"]["first"], list):
 
         counter = 0
@@ -1397,29 +1440,20 @@ async def check_slo(type_param: int, request: Request):
             loadCons.append(loadCons_dict)
 
 
-
-
-
-
-
-
-            ## load stage logs
+            ## load stage workload
             if entry["third"]["third"]:
-                # mapped_values = {}
                 mapped_values = defaultdict(float)
                 
                 for item in entry["third"]["third"][0]["values"]:
                         timestamp_s = int(item[0])
                         
                         closest_timestamp = min(loadCons[counter], key=lambda t: abs(t - timestamp_s))
-                        # mapped_values[item[1]] = loadCons_dict[closest_timestamp]
                         mapped_values[closest_timestamp] += float(item[1])
 
                 mapped_list = list(mapped_values.items())
                 loadLogs.append(mapped_list)
                 counter += 1
-                # loadLogs.append(entry["third"]["third"][0]["values"])
-                
+            
     else:
         ## cons
         for entry in data["results"]["first"]["first"]:
@@ -1433,13 +1467,12 @@ async def check_slo(type_param: int, request: Request):
 
 
         counter = 0
-        ## logs
+        ## workload
         for entry in data["results"]["first"]["second"]:
             
             mapped_values = defaultdict(float)
 
 
-            ## item -> timestamp float [0] + value str/float [1]
             for item in entry[0]["values"]:
                 timestamp_s = int(item[0])
                 
@@ -1464,23 +1497,15 @@ async def check_slo(type_param: int, request: Request):
 
     logger.info("Efficiency result: %d", result)
     save_data_to_json('type14_results.json', {
-        'Efficiency_result': result
+        'ER': result
     }, gload)
     save_data_to_json('all_results_data.json', all_results_data, gload)
+    all_results_data = {}
     return check_result(result, operator, threshold)
 
 
 
 
-
-
-
-# def save_data_to_json(filename, data):
-#     if not os.path.exists("slo_results"):
-#         os.mkdir("slo_results")
-#     path = os.path.join("slo_results", filename)
-#     with open(path, 'w') as file:
-#         json.dump(data, file, indent=4)
 
 
 def save_data_to_json(filename, data, load):

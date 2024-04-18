@@ -123,21 +123,12 @@ class NonIsolatedExperimentRunnerImpl(
         val lengthResources = resources.size
         var counter = 0
         val start = Instant.now()
-//        var benchmarkDeployment : BenchmarkDeployment
-        println("Loads:$loads")
-        println("Resources:$resources")
-        logger.info { "TEST" }
-        logger.info { "Loads:$loads"  }
-        logger.info { "Resources:$resources"  }
         loads.zip(resources).forEach { (load, resource) ->
-            println("Load:$load")
-            logger.info { "Load:$load"  }
-            println("Resource: $resource")
-            logger.info { "Resource: $resource"  }
+
 
 
             try {
-                println("Load: $load, Resource: $resource")
+                logger.info { "Run -> Load: $load, Resource: $resource" }
                 counter++
 
                 val benchmarkDeployment = benchmarkDeploymentBuilder.buildDeployment(
@@ -150,7 +141,6 @@ class NonIsolatedExperimentRunnerImpl(
                         this.afterTeardownDelay,
                         this.waitForResourcesEnabled
                 )
-//            try {
 
 
 
@@ -175,13 +165,11 @@ class NonIsolatedExperimentRunnerImpl(
                 }
 
                 try {
-                    println(counter)
                     if (counter == lengthResources) {
                         benchmarkDeployment.teardown()
                     } else {
                         benchmarkDeployment.teardownNonResources()
                     }
-//                benchmarkDeployment.teardown()
                     if (mode == ExecutionModes.OPERATOR.value) {
                         eventCreator.createEvent(
                                 executionName = executionName,
@@ -217,36 +205,6 @@ class NonIsolatedExperimentRunnerImpl(
             }
 
 
-
-
-
-//            try {
-//                if (counter == lengthResources) {
-//                    benchmarkDeployment.teardown()
-//                } else {
-//                    benchmarkDeployment.teardownNonResources()
-//                }
-////                benchmarkDeployment.teardown()
-//                if (mode == ExecutionModes.OPERATOR.value) {
-//                    eventCreator.createEvent(
-//                            executionName = executionName,
-//                            type = "NORMAL",
-//                            reason = "Stop experiment",
-//                            message = "Teardown complete"
-//                    )
-//                }
-//            } catch (e: Exception) {
-//                if (mode == ExecutionModes.OPERATOR.value) {
-//                    eventCreator.createEvent(
-//                            executionName = executionName,
-//                            type = "WARNING",
-//                            reason = "Stop experiment failed",
-//                            message = "Teardown failed: ${e.message}"
-//                    )
-//                }
-//                throw ExecutionFailedException("Error during teardown the experiment", e)
-//            }
-//            counter++
 
         }
 

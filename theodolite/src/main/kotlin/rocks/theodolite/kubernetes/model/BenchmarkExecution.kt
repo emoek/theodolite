@@ -45,7 +45,6 @@ class BenchmarkExecution : KubernetesResource {
         lateinit var strategy: Strategy
         var duration by Delegates.notNull<Long>()
         var repetitions by Delegates.notNull<Int>()
-        var experimentType: String = ""
         var loadGenerationDelay = 0L
         var afterTeardownDelay = 5L
     }

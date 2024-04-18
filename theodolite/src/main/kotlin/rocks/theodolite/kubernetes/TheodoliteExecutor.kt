@@ -67,9 +67,9 @@ class TheodoliteExecutor(
         val slos = SloFactory().createSlos(this.benchmarkExecution, this.benchmark)
 
 
-        if (benchmarkExecution.execution.experimentType == STAGED) {
+        if (benchmark.experimentType == STAGED) {
 
-            logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
+            logger.info { "The ${benchmark.experimentType} ExperimentRunner Implementation is being used " }
             experimentRunner =
                     StageBasedExperimentRunnerImpl(
                             benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
@@ -88,8 +88,8 @@ class TheodoliteExecutor(
                     )
 
 
-        } else if (benchmarkExecution.execution.experimentType == NONISOLATED) {
-            logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
+        } else if (benchmark.experimentType == NONISOLATED) {
+            logger.info { "The ${benchmark.experimentType} ExperimentRunner Implementation is being used " }
             experimentRunner =
                     NonIsolatedExperimentRunnerImpl(
                             benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
@@ -107,7 +107,7 @@ class TheodoliteExecutor(
                             waitForResourcesEnabled = this.benchmark.waitForResourcesEnabled
                     )
         } else {
-            logger.info { "The ${benchmarkExecution.execution.experimentType} ExperimentRunner Implementation is being used " }
+            logger.info { "The ${benchmark.experimentType} ExperimentRunner Implementation is being used " }
             experimentRunner =
                     ExperimentRunnerImpl(
                             benchmarkDeploymentBuilder = KubernetesBenchmarkDeploymentBuilder(this.benchmark, this.client),
@@ -128,7 +128,7 @@ class TheodoliteExecutor(
 
         }
 
-        if(benchmarkExecution.execution.experimentType != NONISOLATED) {
+        if(benchmark.experimentType != NONISOLATED) {
             if (benchmarkExecution.load.loadValues != benchmarkExecution.load.loadValues.sorted()) {
                 benchmarkExecution.load.loadValues = benchmarkExecution.load.loadValues.sorted()
                 logger.info {
@@ -154,7 +154,7 @@ class TheodoliteExecutor(
             }
         }
 
-        if (benchmarkExecution.execution.experimentType == NONISOLATED) {
+        if (benchmark.experimentType == NONISOLATED) {
             logger.info { "The nonisolated experiment runner is being used. Hence, per default the dummy NoSearch strategy and the metric efficiency is being used." }
             return Config(
                     loads = benchmarkExecution.load.loadValues,

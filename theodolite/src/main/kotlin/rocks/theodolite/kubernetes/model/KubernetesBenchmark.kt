@@ -37,6 +37,8 @@ class KubernetesBenchmark : KubernetesResource {
     lateinit var infrastructure: Resources
     lateinit var sut: Resources
     lateinit var loadGenerator: Resources
+    var experimentType: String = ""
+
 
     /**
      * The TypeName encapsulates a list of [PatcherDefinition] along with a typeName that specifies for what the [PatcherDefinition] should be used.

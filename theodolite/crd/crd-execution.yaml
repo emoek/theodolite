@@ -97,10 +97,6 @@ spec:
                   duration:
                     description: Defines the duration of each experiment in seconds.
                     type: integer
-                  experimentType:
-                    description: Either staged (differ between stages), non-isolated (no isolation of load and resource), or original (default).
-                    type: string
-                    default: ""
                   repetitions:
                     description: Number of repititions for each experiment.
                     type: integer

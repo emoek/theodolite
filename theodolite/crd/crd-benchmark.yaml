@@ -508,6 +508,10 @@ spec:
                                   type: string
                                   description: Specifies a regular expression that is matched with the metadata.name property of all resources with given api/version and Kind that should be deleted.
                                   default: "*"
+              experimentType:
+                description: Either staged (differ between stages), non-isolated (no isolation of load and resource), or original (default).
+                type: string
+                default: ""
               resourceTypes:
                 description: A list of resource types that can be scaled for this `benchmark` resource. For each resource type the concrete values are defined in the `execution` object.
                 type: array

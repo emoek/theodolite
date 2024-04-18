@@ -27,7 +27,6 @@ import kotlin.properties.Delegates
  * @constructor construct an empty Benchmark.
  */
 @JsonDeserialize
-@JsonIgnoreProperties(ignoreUnknown = true)
 @RegisterForReflection
 class KubernetesBenchmark : KubernetesResource {
     lateinit var name: String

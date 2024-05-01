@@ -87,6 +87,13 @@ The following 3rd party charts are used by Theodolite:
 - Grafana (deprecated as replaced by Kube Prometheus Stack)
 - Strimzi (for managing Kafka and Zookeeper)
 
+Additional dependencies to original Theodolite:
+
+- Kepler
+  - to monitor and attribute energy consumption
+- Loki-Stack
+  - if logs used for workload calculation as throughput
+
 ### Hints
 
 #### Grafana

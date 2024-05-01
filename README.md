@@ -6,9 +6,14 @@
 
 Theodolite is a framework for benchmarking the horizontal and vertical scalability of cloud-native applications in Kubernetes.
 
+
+
 ## Quickstart
 
 Theodolite runs scalability benchmarks in Kubernetes. Follow our [quickstart guide](https://www.theodolite.rocks/quickstart.html) to get started.
+
+This is the modified version as part of the Thesis X integrating Efficiency Benchmarking into Theodolite. 
+The original Theodolite repository can be accessed here: https://github.com/cau-se/theodolite
 
 ## Documentation
 
